@@ -1,280 +1,280 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodyTools - Professional Developer Tools</title>
-    <link rel="icon" href="main.png" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2563eb;      /* Professional blue */
-            --secondary: #1e40af;    /* Darker blue */
-            --accent: #f59e0b;       /* Gold accent */
-            --dark: #1f2937;         /* Dark gray */
-            --light: #f9fafb;        /* Off-white */
-            --text: #374151;         /* Gray text */
-            --card-bg: rgba(255, 255, 255, 0.95);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, var(--light), #e5e7eb);
-            color: var(--text);
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .logo-img {
-            height: 60px;
-            margin-right: 15px;
-        }
-
-        .logo-text {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .tagline {
-            font-size: 1.2rem;
-            color: var(--text);
-            opacity: 0.8;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .app-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .app-card a {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            height: 100%;
-        }
-
-        .app-icon {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 1.5rem;
-            text-align: center;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .app-icon img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .app-content {
-            padding: 1.5rem;
-        }
-
-        .app-title {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.3rem;
-        }
-
-        .app-desc {
-            color: var(--text);
-            opacity: 0.8;
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-            min-height: 60px;
-        }
-
-        .app-link {
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .creator-info {
-            background: var(--dark);
-            color: white;
-            padding: 3rem 2rem;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 4rem;
-        }
-
-        .creator-name {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            color: white;
-        }
-
-        .creator-title {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 1.2rem;
-            transition: color 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: var(--accent);
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem 0;
-            color: var(--text);
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .apps-grid {
-                grid-template-columns: 1fr;
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CodyTools - Professional Developer Tools</title>
+        <link rel="icon" href="main.png" type="image/png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            :root {
+                --primary: #2563eb;      /* Professional blue */
+                --secondary: #1e40af;    /* Darker blue */
+                --accent: #f59e0b;       /* Gold accent */
+                --dark: #1f2937;         /* Dark gray */
+                --light: #f9fafb;        /* Off-white */
+                --text: #374151;         /* Gray text */
+                --card-bg: rgba(255, 255, 255, 0.95);
             }
-            
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+
+            body {
+                background: linear-gradient(135deg, var(--light), #e5e7eb);
+                color: var(--text);
+                min-height: 100vh;
+                line-height: 1.6;
+            }
+
             .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+            }
+
+            header {
+                text-align: center;
+                margin-bottom: 3rem;
+                padding-bottom: 2rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .logo-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 1.5rem;
+            }
+
+            .logo-img {
+                height: 60px;
+                margin-right: 15px;
+            }
+
+            .logo-text {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: var(--primary);
+            }
+
+            .tagline {
+                font-size: 1.2rem;
+                color: var(--text);
+                opacity: 0.8;
+                max-width: 700px;
+                margin: 0 auto;
+            }
+
+            .apps-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 2rem;
+                margin-bottom: 4rem;
+            }
+
+            .app-card {
+                background: var(--card-bg);
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                border: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .app-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            }
+
+            .app-card a {
+                text-decoration: none;
+                color: inherit;
+                display: block;
+                height: 100%;
+            }
+
+            .app-icon {
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+                padding: 1.5rem;
+                text-align: center;
+                height: 180px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .app-icon img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+
+            .app-content {
                 padding: 1.5rem;
             }
-            
-            .logo-text {
-                font-size: 2rem;
+
+            .app-title {
+                color: var(--primary);
+                margin-bottom: 0.5rem;
+                font-size: 1.3rem;
             }
-            
-            .logo-img {
-                height: 50px;
+
+            .app-desc {
+                color: var(--text);
+                opacity: 0.8;
+                font-size: 0.95rem;
+                margin-bottom: 1rem;
+                min-height: 60px;
             }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo-container">
-                <!-- <img src="main.png" alt="CodyTools Logo" class="logo-img"> -->
-                <div class="logo-text">CodyTools.com</div>
-            </div>
-            <p class="tagline">Premium developer tools designed to optimize your workflow and enhance productivity</p>
-        </header>
 
-        <main>
-            <div class="apps-grid">
-                <div class="app-card">
-                    <a href="https://www.codytools.com/redirect-to-local-server" target="_blank">
-                        <div class="app-icon">
-                            <img src="rtls.png" alt="Redirect to Local Server">
-                        </div>
-                        <div class="app-content">
-                            <h3 class="app-title">Redirect to Local Server</h3>
-                            <p class="app-desc">Effortlessly tunnel public URLs to your local development environment. Perfect for testing webhooks, OAuth callbacks, and API integrations without deploying.</p>
-                            <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
-                        </div>
-                    </a>
+            .app-link {
+                color: var(--accent);
+                font-weight: 600;
+                font-size: 0.9rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .creator-info {
+                background: var(--dark);
+                color: white;
+                padding: 3rem 2rem;
+                border-radius: 12px;
+                text-align: center;
+                margin-top: 4rem;
+            }
+
+            .creator-name {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+                color: white;
+            }
+
+            .creator-title {
+                font-size: 1.1rem;
+                opacity: 0.8;
+                margin-bottom: 1.5rem;
+            }
+
+            .social-links {
+                display: flex;
+                justify-content: center;
+                gap: 1.5rem;
+                margin-top: 1.5rem;
+            }
+
+            .social-links a {
+                color: white;
+                font-size: 1.2rem;
+                transition: color 0.3s ease;
+            }
+
+            .social-links a:hover {
+                color: var(--accent);
+            }
+
+            footer {
+                text-align: center;
+                padding: 2rem 0;
+                color: var(--text);
+                opacity: 0.7;
+                font-size: 0.9rem;
+            }
+
+            @media (max-width: 768px) {
+                .apps-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .container {
+                    padding: 1.5rem;
+                }
+                
+                .logo-text {
+                    font-size: 2rem;
+                }
+                
+                .logo-img {
+                    height: 50px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="logo-container">
+                    <!-- <img src="main.png" alt="CodyTools Logo" class="logo-img"> -->
+                    <div class="logo-text">CodyTools.com</div>
+                </div>
+                <p class="tagline">Premium developer tools designed to optimize your workflow and enhance productivity</p>
+            </header>
+
+            <main>
+                <div class="apps-grid">
+                    <div class="app-card">
+                        <a href="https://www.codytools.com/redirect-to-local-server" target="_blank">
+                            <div class="app-icon">
+                                <img src="rtls.png" alt="Redirect to Local Server">
+                            </div>
+                            <div class="app-content">
+                                <h3 class="app-title">Redirect to Local Server</h3>
+                                <p class="app-desc">Effortlessly tunnel public URLs to your local development environment. Perfect for testing webhooks, OAuth callbacks, and API integrations without deploying.</p>
+                                <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="app-card">
+                        <a href="https://www.codytools.com/github-postman-sync" target="_blank">
+                            <div class="app-icon">
+                                <img src="gps1.png" alt="GitHub Postman Sync">
+                            </div>
+                            <div class="app-content">
+                                <h3 class="app-title">GitHub Postman Sync</h3>
+                                <p class="app-desc">Automatically synchronize your Postman collections with GitHub repositories. Version control your API definitions and collaborate seamlessly with your team.</p>
+                                <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="app-card">
+                        <a href="https://www.codytools.com/smart-json-formatter" target="_blank">
+                            <div class="app-icon">
+                                <img src="sjf.png" alt="Smart JSON Formatter">
+                            </div>
+                            <div class="app-content">
+                                <h3 class="app-title">Smart JSON Formatter</h3>
+                                <p class="app-desc">Advanced JSON processing with intelligent formatting, validation, minification, and conversion to XML/YAML. Supports schema analysis and error detection.</p>
+                                <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
-                <div class="app-card">
-                    <a href="https://www.codytools.com/github-postman-sync" target="_blank">
-                        <div class="app-icon">
-                            <img src="gps.jpg" alt="GitHub Postman Sync">
-                        </div>
-                        <div class="app-content">
-                            <h3 class="app-title">GitHub Postman Sync</h3>
-                            <p class="app-desc">Automatically synchronize your Postman collections with GitHub repositories. Version control your API definitions and collaborate seamlessly with your team.</p>
-                            <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
-                        </div>
-                    </a>
+                <div class="creator-info">
+                    <h2 class="creator-name">Saurabh Fodekar</h2>
+                    <p class="creator-title">Backend Developer & Tools Creator</p>
+                    <p>Building professional-grade developer tools to solve real-world developer's challenges</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                    </div>
                 </div>
+            </main>
 
-                <div class="app-card">
-                    <a href="https://www.codytools.com/smart-json-formatter" target="_blank">
-                        <div class="app-icon">
-                            <img src="sjf.png" alt="Smart JSON Formatter">
-                        </div>
-                        <div class="app-content">
-                            <h3 class="app-title">Smart JSON Formatter</h3>
-                            <p class="app-desc">Advanced JSON processing with intelligent formatting, validation, minification, and conversion to XML/YAML. Supports schema analysis and error detection.</p>
-                            <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <div class="creator-info">
-                <h2 class="creator-name">Saurabh Fodekar</h2>
-                <p class="creator-title">Backend Developer & Tools Creator</p>
-                <p>Building professional-grade developer tools to solve real-world developer's challenges</p>
-                <div class="social-links">
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <p>&copy; 2023 CodyTools.com. All rights reserved.</p>
-            <p>Professional developer tools for modern workflows | contact@codytools.com</p>
-        </footer>
-    </div>
-</body>
-</html>
+            <footer>
+                <p>&copy; 2023 CodyTools.com. All rights reserved.</p>
+                <p>Professional developer tools for modern workflows | contact@codytools.com</p>
+            </footer>
+        </div>
+    </body>
+    </html>
