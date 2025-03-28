@@ -1,0 +1,619 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+    height: 100vh;
+    overflow: hidden;
+}
+.container {
+    width: 60%;
+    margin: 0 20%;
+    height: 100vh;
+    background: white;
+    padding: 0;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    color: #333;
+    /* text-align: center; */
+    margin: 0;
+    padding: 15px 0;
+    padding-left: 20px;
+}
+.controls {
+    padding: 0 20px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+button {
+    padding: 8px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#raw-btn { background: #2196F3; }
+#copy-btn { background: #ff9800; }
+.editor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px 20px;
+    overflow: hidden;
+}
+textarea, #output {
+    width: 100%;
+    flex: 1;
+    padding: 10px 0px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    white-space: pre;
+    overflow: auto;
+    margin: 0;
+}
+#output {
+    background: #f8f8f8;
+}
+.hidden { display: none; }
+.collapsible {
+    cursor: pointer;
+    color: #666;
+    margin-right: 5px;
+}
+.key { color: #d63384; font-weight: bold; }
+.string { color: #20b2aa; }
+.number { color: #ff8c00; }
+.boolean { color: #0000ff; }
+.null { color: #808080; }
+
+.error {
+    background-color: #ffdddd;
+    color: #ff0000;
+    border-bottom: 2px solid #ff0000;
+}
+.error-message {
+    color: #ff0000;
+    padding: 5px;
+    margin-top: 5px;
+    white-space: normal;
+}
+.error-line {
+    background-color: #fff0f0;
+    display: block;
+    margin-top: 10px;
+    padding: 5px;
+    border-left: 3px solid #ff0000;
+    font-family: Consolas, monospace;
+    white-space: pre;
+}
+.error-arrow {
+    color: #ff0000;
+    padding-left: 10px;
+}
+.error-context {
+    font-family: Consolas, monospace;
+    margin-top: 5px;
+    padding: 5px;
+    background-color: #fff0f0;
+    border-left: 3px solid #ff0000;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: 12px;
+}
+.error-pointer {
+    color: #ff0000;
+
+    background-color: #ffdddd;
+}
+
+.search-container {
+    display: flex;
+    /* gap: 5px; */
+
+    align-items: center;
+    position: relative;
+}
+
+#key-search {
+    padding: 8px;
+    width: 40%; 
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+
+}
+
+#path-results {
+    position: absolute;
+    padding: 10px;
+    top: 100%;
+    left: 0;
+    right: 0; /* Add this to stretch to container's right edge */
+    width: auto; /* Change from 200% to auto */
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.search-btn {
+    /* padding: 8px 15px; */
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+/* Add this to ensure proper positioning within the search container */
+.search-container {
+    position: relative;
+    flex-grow: 1; /* Allow it to grow and fill available space */
+    min-width: 150px; /* Minimum width for the search input */
+}
+
+.path-item {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.path-item:hover {
+    background-color: #c2bfbf;
+}
+
+/* Path Results Styling */
+#path-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Container for path results */
+#path-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto; /* Vertical scroll */
+    overflow-x: auto; /* Horizontal scroll */
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Individual path items */
+.path-item {
+    padding: 8px 12px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap; /* Prevent text wrapping */
+    min-width: 100%; /* Force full width */
+    display: inline-block; /* Needed for min-width to work */
+}
+
+.path-item:hover {
+    background: #e9ecef;
+    width: auto; /* Allow expansion beyond container */
+}
+
+/* Optional: Style scrollbars */
+#path-results::-webkit-scrollbar {
+    height: 5px; /* Horizontal scrollbar height */
+    width: 5px; /* Vertical scrollbar width */
+}
+
+#path-results::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+/* Syntax Coloring */
+.path-item .bracket { color: #6c757d; }          /* Gray for brackets */
+.path-item .index { color: #0d6efd; }            /* Blue for indices */
+.path-item .wildcard { color: #fd7e14; }         /* Orange for wildcards */
+.path-item .dot { color: #6c757d; }              /* Gray for dots */
+.path-item .key { color: #198754; }              /* Green for keys */
+.path-item .root { color: #6f42c1; font-weight: bold; } /* Purple for root */
+
+/* Path Results Styling */
+#path-results {
+    position: absolute;
+    top: 100%;
+    padding-left: 10px;
+    left: 0;
+    right: 0;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+.path-item {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.path-item:hover {
+    background: #e9ecef;
+}
+
+/* Syntax Coloring with Alternating Colors */
+.path-item .bracket { color: #6c757d; }          /* Gray for brackets */
+.path-item .dot { color: #6c757d; }              /* Gray for dots */
+.path-item .index { color: #0d6efd; }            /* Blue for indices */
+.path-item .wildcard { color: #fd7e14; }         /* Orange for wildcards */
+
+/* Alternating key colors */
+.path-item .key-1 { color: #198754; }            /* Green */
+.path-item .key-2 { color: #d63384; }            /* Pink */
+.path-item .key-3 { color: #157fbc; }            /* Cyan */
+.path-item .key-4 { color: #ffc107; }            /* Yellow */
+
+.path-item .root { 
+    color: #6f42c1; 
+    font-weight: bold; 
+} /* Purple for root */
+
+.clear-search {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 0 4px;
+    font-size: 16px;
+    line-height: 1;
+    display: none; /* Hidden by default */
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.clear-search:hover {
+    color: #666;
+    background: #f0f0f0;
+}
+
+.clear-search:active {
+    background: #e0e0e0;
+}
+
+/* Show clear button when input has value */
+#key-search:not(:placeholder-shown) + .clear-search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Adjust input padding to prevent text overlap */
+#key-search {
+    padding-right: 30px !important; /* Make space for clear button */
+}
+
+/* Button Hover Effects */
+button {
+    padding: 8px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Specific button colors with hover effects */
+#raw-btn { 
+    background: #2196F3;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+#raw-btn:hover {
+    background: #0d8bf2;
+    box-shadow: 0 3px 6px rgba(33, 150, 243, 0.3);
+}
+
+#copy-btn { 
+    background: #ff9800;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+#copy-btn:hover {
+    background: #fb8c00;
+    box-shadow: 0 3px 6px rgba(255, 152, 0, 0.3);
+}
+
+/* Input Field Styling */
+#key-search {
+    padding: 8px 30px 8px 12px;
+    width: 40%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+#key-search:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* When typing (has content) */
+#key-search:not(:placeholder-shown) {
+    border-color: #2196F3;
+}
+
+/* Clear button adjustments */
+.clear-search {
+    /* ... existing clear button styles ... */
+    transition: all 0.3s ease;
+}
+
+.clear-search:hover {
+    color: #ff4444;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Path item hover enhancement */
+.path-item:hover {
+    background: #e9ecef;
+    transform: translateX(2px);
+    transition: all 0.2s ease;
+}
+
+/* Format button special effect */
+#format-btn {
+    position: relative;
+    z-index: 1;
+}
+
+#format-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.1);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s ease;
+}
+
+#format-btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Toast Notification System - Center Bottom Animation */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.toast {
+    padding: 16px 24px;
+    border-radius: 8px;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 80%;
+    min-width: 300px;
+    opacity: 0;
+    transform: translateY(100px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: all;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.hide {
+    opacity: 0;
+    transform: translateY(-50px);
+}
+
+/* Color Variants */
+.toast.success {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+}
+
+.toast.error {
+    background: linear-gradient(135deg, #f44336, #C62828);
+}
+
+.toast.warning {
+    background: linear-gradient(135deg, #FF9800, #F57C00);
+}
+
+.toast.info {
+    background: linear-gradient(135deg, #2196F3, #1565C0);
+}
+
+/* Close Button */
+.toast-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-left: 20px;
+    font-size: 20px;
+    opacity: 0.8;
+    padding: 0 0 3px 8px;
+    line-height: 1;
+    transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+/* Progress Bar */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    width: 100%;
+}
+
+.toast-progress-bar {
+    height: 100%;
+    background: rgba(237, 234, 234, 0.8);
+    width: 100%;
+    transform-origin: left;
+}
+
+.collapsible {
+    cursor: pointer;
+    color: #666;
+    margin-right: 5px;
+    margin-left: 2px;
+    font-size: 14px;
+    padding: 0px 4px;
+    background: #eae8e8;
+    border-radius: 3px;
+    /* border: 1px solid #ddd; */
+    user-select: none;
+    transition: all 0.2s ease;
+    user-select: none; /* Standard property */
+    -webkit-user-select: none; /* Safari, Chrome, Opera */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* Internet Explorer/Edge (older) */
+}
+
+.collapsible:hover {
+    background: #c7c6c6;
+    /* border-color: #ccc; */
+}
+
+/* Make sure the content div has proper spacing */
+.collapsible + div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Add these to your CSS */
+.json-container {
+    position: relative;
+    padding-left: 20px;
+    border-left: 1px solid #e0e0e0;
+    margin-left: 10px;
+}
+
+.collapse-control {
+    position: absolute;
+    left: -12px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    user-select: none;
+      /* --- ADD THIS LINE --- */
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+}
+
+.collapse-control:hover {
+    background: #f0f0f0;
+}
+
+.json-line {
+    position: relative;
+}
+
+.collapsible-content {
+    margin-left: 15px;
+    border-left: 1px solid #e0e0e0;
+    padding-left: 15px;
+}
+
+.collapsible {
+    cursor: pointer;
+    color: #666;
+    margin-right: 3px;
+    font-weight: bold;
+    user-select: none;
+}
+
+.collapsible-content {
+    display: block;
+}
+
+.json-line {
+    position: relative;
+    padding-left: 10px;
+}
+
+

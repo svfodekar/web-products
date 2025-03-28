@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON Formatter</title>
+    <link rel="icon" type="image/png" href="json-logo2.png">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="container">
+        <h1>JSON Formatter </h1>
+        <div class="controls">
+            <button id="raw-btn">Input Text</button>
+            <button id="format-btn">Format JSON</button>
+            <button id="copy-btn">Copy it</button>
+            <div class="search-container">
+                <input type="text" id="key-search" placeholder="Enter key to get path...">
+                <div id="path-results" class="hidden"></div>
+            </div>
+        </div>
+        <div class="editor-container">
+            <textarea id="input" placeholder=" Paste your JSON here..."></textarea>
+            <pre id="output" class="hidden"></pre>
+            <div id="error-message" class="error-message hidden"></div>
+            <div id="error-line-display" class="hidden"></div>
+            <div id="error-context" class="error-context hidden"></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

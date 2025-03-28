@@ -1,0 +1,353 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0px;
+    background-color: white;
+
+}
+.main {
+    max-width: 60%;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background: #007bff;
+    color: white;
+    border-radius: 10px;
+}
+.header .logo-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.header img {
+    width: 60px;
+    height: 50px;
+    border-radius: 20%;
+}
+.header button {
+    background: #e87629;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.header button:hover {
+    background: #e84147;
+}
+
+/* Work Section */
+.work-section {
+    margin-top: 20px;
+}
+.work-sec-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f4f4f4;
+    margin-top: -5px;
+}
+.work-sec-header label {
+    font-weight: bold;
+}
+.work-sec-header select, .work-sec-header button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.work-sec-header button {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+.work-sec-header button:hover {
+    background: #0056b3;
+}
+
+/* Terminal & Config Sections */
+.terminal, .config {
+    display: none;
+    padding: 20px;
+    height: 90%;
+    border-radius: 8px;
+    background: #eeecec;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    background: #f4f4f4;
+}
+.terminal.active, .config.active {
+    display: block;
+}
+
+/* Input Field */
+.cmd-section input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold; /* Makes text bold */
+    color: rgb(51, 50, 50);
+    margin-top: 10px;
+    box-sizing: border-box; /* Ensures width includes padding and border */
+    transition: background-color 0.3s ease, border 0.3s ease;
+    font-family: "Courier New", monospace;
+    font-size: 14px !important;
+}
+
+/* Change background color on focus */
+.cmd-section input:focus {
+    background-color: #f5dac0; /* Light grey background */
+    border: 1px solid #bfbdbd; /* Slightly darker border */
+    outline: none; /* Removes default blue outline */
+}
+
+
+/* Logs Section */
+.logs {
+    margin-top: 20px;
+    padding: 15px;
+    background: #212121;
+    border-radius: 8px;
+    border: 1px solid #444;
+    height: 400px;
+    overflow-y: auto;
+    color: rgb(207, 204, 204);
+    font-family: "Courier New", monospace;
+    font-size: 14px !important; /* Ensure font size is applied */
+    line-height: 1.4;
+}
+
+/* Custom Scrollbar */
+.logs::-webkit-scrollbar {
+    width: 8px;
+}
+
+.logs::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+.logs::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+.logs::-webkit-scrollbar-track {
+    background: #222;
+}
+
+
+/* Config */
+.config label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+.config input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+
+.config {
+    padding: 15px;
+    background: #f4f4f4;
+    height: 500px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    
+}
+
+.config label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+.config input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.config input:focus {
+    background-color: #e8e8e8;
+    outline: none;
+}
+
+.config button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 40%;
+    text-align: center; /* Centers inline elements */
+    margin-left: 30%;
+    margin-top: 16px;
+    font-size: 16px;
+}
+
+.config button:hover {
+    background-color: #0056b3;
+}
+
+.config-message {
+    font-size: 18px;
+    color: #f6f4f4;
+    background:  #3f8650;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: -20px;
+    font-weight: bold;
+ 
+    margin-top: 10px;
+}
+
+
+.repo-container {
+    position: relative;
+    display: inline-block;
+    width: 250px;
+}
+
+#repoInput {
+    width: 92%;
+    padding: 10px;
+    height: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#repoSelect, #branchSelect {
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: none;
+    max-height: 150px;
+    overflow-y: auto;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent text wrapping */
+    z-index: 1000; /* Ensure dropdown appears above other elements */
+}
+
+
+#repoSelect option {
+    padding: 8px;
+    cursor: pointer;
+}
+
+#repoSelect option:hover {
+    background: #f0f0f0;
+    border: #838181;
+}
+
+
+.branch-container {
+    position: relative;
+    width: 145px;
+    padding-right: 15px;
+}
+
+#branchSelect {
+    width: 112%;
+}
+#branchInput {
+    width: 100%;
+    padding: 8px;
+    height: 13.5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.dropdown {
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+}
+
+
+#branchSelect option {
+    padding: 8px;
+    cursor: pointer;
+}
+
+#branchSelect option:hover {
+    background: #f0f0f0;
+    border: #838181;
+}
+
+.cmd-section {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between input and button */
+    width: 100%;
+}
+#clearButton {
+    padding: 10px 15px;
+    font-size: 14px;
+    height: 40.5px; /* Same height as input field */
+    background-color: rgb(218, 98, 13);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 9px;
+}
+
+#clearButton:hover {
+    background-color: rgb(176, 75, 3);
+}
+
+
+#feedbackButton {
+    display: inline-block;
+    color: rgb(220, 213, 208);
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 14px;
+    margin-right: 18px;
+    margin-top: 10px;
+}
+
+#feedbackButton:hover {
+    color: darkorange; /* Changes to a darker shade on hover */
+}
+
+

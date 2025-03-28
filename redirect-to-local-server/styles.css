@@ -1,0 +1,1028 @@
+html, body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9fa;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    align-items: center; /*ge this to none if you want it hidden initially */
+    align-self: center;
+    overflow: hidden; /* Disable scrolling on the entire page */
+    height: 100%; /* Ensure the body takes up the full height of the viewport */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}
+ 
+.child-container-content {
+    width: 750px;
+    margin: auto;
+}
+ 
+/* Popup container */
+.popup {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Full height of the popup */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevents overflow on the popup itself */
+}
+ 
+/******************** Title  BOX *************************/
+ 
+.header-logo {
+    height: 35px; /* Set height for the logo */
+    width: auto; /* Maintain the aspect ratio */
+}
+ 
+ 
+.header-box h3 {
+    font-size: 23px; /* Font size */
+    color: rgb(238, 236, 236); /* Text color */
+    margin: 0; /* Remove default margin */
+    font-weight: bold; /* Optional: Make it bold */
+    margin-left: 380px; /* Move the text slightly to the right */
+    
+}
+.header-box {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /*ge this to none if you want it hidden initially */
+    transition: all 0.3s ease; /* Optional: Add transition for smooth effect */
+    box-sizing: border-box;
+}
+ 
+.header-box.hidden {
+    display: none; /* Hides the header box */
+}
+ 
+.header-box .switch {
+    margin-left: 0px; /* Adjusts margin to the right */
+    position: relative;   
+    left: -6%;
+    color: #020202;
+    margin-bottom: -7px;
+}
+ 
+ 
+ 
+/***********************************************************************/
+ 
+h4 {
+    color: #08437d; /* Text color */
+    margin-top: 0; /* Space above the subheader */
+    margin-bottom: 0; /* Space below the subheader */
+    padding: 3px 50px; /* Vertical and horizontal padding */
+   /* border-bottom: 1.5px solid #7ab2d8;/* Underline effect */
+    width: 100%; /* Ensure it takes full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+ 
+h3 {
+    color: #f6f6f7;
+    text-align: center;
+    margin-bottom: 150px; /* Reduced margin below the header */
+}
+ 
+ 
+ 
+input[type="text"], select {
+    width: calc(100% - 10px); /* Width adjusted for compactness */
+    padding: 3px; /* Reduced padding */
+    border: 1px solid #5a9be0; /* Blue border */
+    border-radius: 4px;
+    margin-bottom: 4px; /* Reduced space below input fields */
+    font-size: 14px; /* Smaller font size for input fields */
+}
+ 
+ 
+/** controles width of selector*/
+.method-save-container {
+    display: flex; /* Flexbox layout for method and button */
+    align-items: center; /* Align items vertically in the center */
+}
+ 
+#methodSelect {
+    width: calc(50% - 100px);
+    /* Reduced width to half */
+    margin-right: 15px;
+    align-items: baseline;
+}
+ 
+ 
+#methodSelect {
+    flex: left; /*Allow select to take remaining space */
+    padding-top: 0px; /* Padding for select */
+    padding-bottom: 0px;
+    padding-left: 5px;
+    margin-right: 10px; /* Space between select and button */
+    margin-top: 3px; /* Adjust margin as needed */
+    border: 1px solid #187df1; /* Blue border */
+    border-radius: 5px; /* Rounded corners */
+    height: 23px; /* Set height */
+    background: white; /* Solid white background */
+    color: #333; /* Text color */
+    font-size: 12px; /* Font size */
+    display: flex; /* Use flex for better alignment*/
+    align-items: center;
+}
+ 
+ 
+ 
+/* #methodSelect option {
+    width: 500px !important;
+    
+} */
+ 
+#methodSelect:active {
+    width: 120;
+    margin-top: 33px;
+    margin-left: 8.5px;
+}
+ 
+ 
+/** effect for add button */
+#addRedirect {
+    padding: 0 10px; /* Adjusted padding for better alignment */
+    height: 24px; /* Set height */
+    width: 150px;
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    background: linear-gradient(135deg, #2196F3, #10519b);
+    color: white; /* Button text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition for background color and scale */
+    margin-left: 10px; /* Space between select and button */
+    margin-top: -18px; /* Remove negative margin */
+    margin-bottom: 0px;
+}
+button:hover {
+    background: linear-gradient(135deg, #2196F3, #10519b);
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+ 
+/******  "Added Redirects" text effect *******/
+h4 {
+    color: #003366;
+    font-size: 15px; /* Increase the font size */
+    margin-top: 3px; /* More space above the subheader */
+    margin-bottom: -12px; /* More space below the subheader */
+    padding-left: 10px; /* Keep left padding for alignment */
+}
+ 
+/*** message effect *********/
+#status {
+    margin-left: 3px; /* Space between button and status */
+    margin-top: -7px; /* Set to 0 to align closely */
+    color: #333; /* Status text color */
+    font-size: 14px; /* Font size for status */
+    display: flex; /* Use flex for better alignment */
+    align-items: center; /* Center align vertically */
+}
+ 
+/***************************** url inpute effect*****************************/
+.redirect-container {
+    background: rgba(255, 255, 255, 0.3); /* Semi-transparent white for glassy effect */
+    border-radius: 10px; /* Slightly rounded corners for a modern look */
+    padding: 20px; /* Padding around the container */
+    padding-top: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Deeper shadow for more depth */
+    backdrop-filter: blur(15px); /* Stronger blur for a frosted glass effect */
+    width: 750px; /* Maximum width for the container */
+    margin-top: 2px;
+    align-items: center; /* Align items vertically in the center */
+    box-sizing: border-box;
+    border: 1.5px solid #518ccb; /* Background color */
+    /* background-color:#f1f2f4;  background: linear-gradient(135deg, #2196F3, #10519b); Background color */
+    transition: all 0.4s ease; /* Smooth transition for hover effects */
+}
+ 
+.small-label {
+    display: block; /* Block display for labels */
+    margin-bottom: 1px; /* Space between label and input */
+    font-size: 11px;
+    font-weight: bold; /* Bold text for emphasis */
+    color: #333; /* Dark text color */
+}
+ 
+.small-input {
+    width: 100%; /* Full width of the container */
+    padding: 5x; /* Padding inside the input */
+    margin-bottom: 20px; /* Space below each input */
+    border: none; /* Remove default border */
+    border-radius: 10px; /* Rounded corners */
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+    color: #333; /* Text color */
+    font-size: 14px; /* Font size */
+    transition: background 0.3s ease; /* Smooth transition for background color */
+    word-break: break-all;
+    font-size: 16px;
+}
+ 
+.small-input:focus {
+    border-color: #0c88e1; /* Change border color on focus */
+    box-shadow: 0 0 16px rgba(19, 52, 89, 0.8);
+    outline: none; /* Remove default focus outline */
+}
+ 
+#fromUrl,
+#toUrl {
+  font-size: 15px; /* Increase font size */
+  padding: 10px; /* Add padding for a spacious look */
+  height: 30px; /* Explicitly define a larger height */
+  width: 100%; /* Adjust width to fit the container */
+  box-sizing: border-box; /* Prevent padding from breaking layout */
+  border-radius: 5px;
+  border-color: #0c88e1; /* Change border color on focus */
+}
+ 
+ 
+/******** list effects ************************************/
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+ 
+li {
+    background-color: #f8fbfc;
+    padding: 1px;
+    border-radius: 4px;
+    margin-bottom: 0; /* Increased space below list items */
+}
+ 
+hr {
+    border: 0.5px solid #ccc; /* Style for the separator line */
+    margin: 5px 0; /* Margin above and below the line */
+    width: calc(102% + 35px); /* Combine 102% and 10px */
+    min-width: 145%; /* Ensure a minimum width of 105% */
+    position: relative; /* Enable positioning */
+    z-index: 1; /* Ensure the <hr> appears on top of other elements */
+    margin-left: -10px ;
+    margin-right: -10px;
+
+}
+ 
+.redirects-list-container {
+    height: calc(100vh - 50px); /* Adjust based on your layout */
+    display: flex;
+    flex-direction: column;
+}
+
+#redirectList {
+    position: relative;
+    padding: 10px;
+    background-color: #f8fbfc;
+    margin-top: 0;
+    margin-bottom: 0;
+    height: 100%; /* Take up remaining height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    scrollbar-width: thin; /* Firefox */
+    flex-grow: 1;
+    white-space: nowrap; /* Prevent text wrapping */
+    
+}
+ 
+ 
+ 
+.redirects-list-container {
+    overflow-y: auto; /* Enable vertical scrolling */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow for a glossy look */
+    padding: 1px; /* Padding inside the container */
+ 
+    display: flex;
+    flex-direction: column;
+}
+ 
+.redirects-list-header {
+    display: flex;
+    align-items: center; /* Align items vertically centered */
+    margin-top: 5px;
+}
+ 
+#disableAllBtn {
+    width: 120px;
+    height: 25px;
+    font-size: 12px ;
+    padding: 5px 0; /* Vertical padding for the button */
+    background: linear-gradient(135deg, #2196F3, #10519b);
+    color: white; /* Button text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    /* transition: background 0.3s ease, transform 0.3s ease; Smooth transition for background color and scale */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-top: 5px;
+    margin-right: 33px;
+    margin-bottom: 10px;
+    border-radius: 3.5px;
+    display: flex; /* Enable flexbox */
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontallysasas */
+ 
+    /* background-color: transparent; Transparent background */
+    border: 1px solid #007bff; /* Background color */
+    cursor: pointer; /* Pointer cursor on hover */
+    
+}
+ 
+ 
+#disableAllBtn:hover {
+    /* background-color: #b4260a; Darker green on hover */
+    background: linear-gradient(135deg, #2196F3, #10519b);
+    /* transform: scale(1.05); Slightly enlarge on hover */
+    /* color: #edf0f4; Blue text */
+}
+ 
+.redirects-list-container .underline {
+    width: 100%; /* Full width of the container */
+    height: 1.5px; /* Height of the underline */
+    background: linear-gradient(135deg, #2196F3, #10519b);
+    margin-top: 5px; /* Space between the button and underline */
+}
+ 
+/****************************************************************/
+ 
+/* Container for the buttons and toggle */
+button.edit-btn,
+button.enable-btn,
+button.delete-btn {
+    background-color: transparent; /* Transparent background */
+    color: #4b87c6; /* Background color */
+    border: 1px solid #4388d2; /* Background color */
+    border-radius: 4px; /* Slightly rounded corners */
+    padding: 2px 10px; /* Padding for size consistency */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 12px; /* Adjust font size */
+    margin-right: 3px; /* Space between buttons */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transitions for hover */
+    height: 20px; /* Fixed height */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+ 
+/* Button hover effect */
+button.edit-btn:hover,
+button.delete-btn:hover {
+    background: linear-gradient(50deg, #2196F3, #134a88);
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    color: #edf0f4; /* Blue text */
+}
+
+/* .enable-btn.enabled {
+    background: linear-gradient(50deg, #2196F3, #134a88);
+    color: #edf0f4;
+  } */
+  
+  .enable-btn.disabled {
+    background-color: #ccc;
+    color: #000;
+  }
+ 
+button.delete-btn:disabled {
+    background-color: grey; /* Grey background when disabled */
+    color: white; /* Change text color to white for better contrast */
+    cursor: not-allowed; /* Change cursor to indicate the button is not clickable */
+}
+ 
+ 
+/******** Toggle button  ***************************************/
+/* Toggle switch container */
+.switch {
+    position: relative;
+    display: inline-block;
+    z-index: 1000; /* High z-index to make it on top of other elements */
+    width: 50px; /* Width of the toggle switch */
+    height: 20px; /* Height of the toggle switch to match button height */
+
+    transform: scale(1.1);
+}
+ 
+/* Hide the default checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+ 
+/* Slider part of the toggle */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: background-color 0.4s;
+    border-radius: 10px; /* Rounded edges */
+}
+ 
+/* Handle inside the slider */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px; /* Height of the handle */
+    width: 16px; /* Width of the handle */
+    left: 2px; /* Space from the left */
+    bottom: 2px; /* Space from the bottom */
+    background-color: white;
+    transition: transform 0.4s;
+    border-radius: 50%; /* Circular handle */
+}
+ 
+/* When the checkbox is checked */
+input:checked + .slider {
+    background-color: #5fb971;
+}
+ 
+/* Move the handle when checked */
+input:checked + .slider:before {
+    transform: translateX(30px); /* Move handle when checked */
+}
+ 
+/* Add ON/OFF text inside the switch */
+.switch-text {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust to perfectly center */
+    left: 5px; /* Position for OFF text */
+    font-size: 10px; /* Font size for the text */
+    color: rgb(255, 255, 255); /* Text color */
+    font-weight: bold; /* Make the text bold */
+    z-index: 1;
+    pointer-events: none; /* Prevent interaction */
+}
+ 
+/* Adjust position for OFF text */
+input:not(:checked) + .slider .switch-text {
+    left: 23px; /* Position for OFF text */
+}
+ 
+/* Adjust position for ON text */
+input:checked + .slider .switch-text {
+    left: 10px; /* Move text when ON */
+}
+ 
+/********************** list actine buttons *****************************/
+.action-container {
+    display: flex; /* Align actions in a row */
+    align-items: center; /* Center vertically */
+    margin-top: 2px;
+}
+ 
+.edit-btn, .delete-btn {
+    /* margin-left: 10px; Space between buttons */
+}
+ 
+.switch {
+    display: inline-block; /* Align the switch inline with buttons */
+    margin-right: 10px; /* Space between switch and buttons */
+}
+/**************************************************************************/
+ 
+/******************** Loding effect ****************************************/
+#loading {
+    position: fixed; /* Keep it fixed in the viewport */
+    top: 35%; /* Center it vertically */
+    left: 48%; /* Center it horizontally */
+    transform: translate(-50%, -50%); /* Adjust for center alignment */
+    z-index: 1000; /* Ensure it appears above other content */
+    display: none; /* Initially hidden */
+}
+ 
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 6px solid rgba(0, 0, 0, 0.2); /* Light gray border */
+    border-top-color: #3b7bdb; /* Blue color for the spinning part */
+    border-radius: 50%; /* Make it a circle */
+    animation: spin 1s linear infinite; /* Spin animation */
+}
+ 
+/* Keyframes for the spin animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+ 
+ 
+/******************************************************/
+ 
+/*****************************************************/
+ 
+.header-box {
+    width: 100%; /* Full width */
+    height: 50px; /* Fixed height */
+    /* background-color: #007bff; Background color */
+    background: linear-gradient(135deg, #3595e2, #02152a);
+    color: white; /* Text color */
+    display: flex; /* Use flexbox */
+    align-items: center; /* Vertically center */
+    position: absolute; /* Position it absolutely */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    padding: 0 20px; /* Add some padding for spacing */
+}
+  
+  .header-box {
+    background: linear-gradient(135deg, #2196F3, #10519b);
+    color: #ffffff; /* White text for contrast */
+    padding: 0 30; /* Remove top/bottom padding and keep side padding */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Softer shadow for depth */
+    position: relative; /* For pseudo-element positioning */
+    margin: 0; /* Remove any margin around the header box */
+    border: none; /* Ensure no border affects rounding */
+    top: 0; /* Ensure it sits flush with the popup's top edge */
+    left: 0; /* Ensure it sits flush with the popup's left edge */
+  }
+  
+  .header-box::after {
+    content: ''; /* Pseudo-element for glossy effect */
+    position: absolute;
+    top: -20px; /* Adjust this to control the height of the gloss */
+    left: 0;
+    right: 0;
+    height: 40px; /* Height of the glossy effect */
+    /* background: rgba(255, 255, 255, 0.3); White gloss with transparency */
+    border-top-left-radius: 2px; /* Matching radius with the header */
+    border-top-right-radius: 1200px; /* Matching radius with the header */
+    transform: rotate(5deg); /* Slight angle for a glossy look */
+    z-index: 0; /* Behind the header content */
+  }
+ 
+  .sub-header-box {
+    width:750px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+   }
+ 
+   .logo-box {
+    display:flex;
+    align-items: center;
+    gap:10px;
+   }
+ 
+   .logo-header-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+   }
+ 
+   .switch-action-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   }
+ 
+ 
+/***************************************************************/
+ 
+ 
+.header-box .switch input:checked + .slider {
+    background-color: #26c431;
+}
+ 
+/*****************wrapper *****************************/
+  
+  .redirect-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: max-height 0.01s ease, opacity 0.01s ease; /* Smooth transition */
+  }
+ 
+  #toggleButton {
+    font-size: 18px;
+    cursor: pointer;
+    border: 0px solid rgb(89, 110, 146);
+    background: linear-gradient(50deg, #dee908, #eb960e);
+    color: rgb(17, 52, 112); /* Set text color to black */                 /* Text color */
+    border-radius: 50%;              /* Make it circular */
+    width: 25px;                     /* Circular dimensions */
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;                   /* Remove outline */
+   /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Optional shadow */
+    /* position: relative;    */
+    /* Adjusted Positioning */
+    right: 10px;              /* Use margin for easier layout control */
+    z-index: 10;                     /* Ensures it stays on top if overlapping */
+    margin-bottom: 6px;
+    margin-right: 20px;
+    color: rgb(32, 30, 29); /* Change text color on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Optional shadow change */
+    transform: scale(1.5); /* Scale and rotate effect */
+  }
+  
+ 
+  #toggleButton:hover {
+    background-color:  #f6c604; /* Change background color on hover */
+    color: rgb(32, 30, 29); /* Change text color on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Optional shadow change */
+    transform: scale(1.80); /* Scale and rotate effect */
+}
+ 
+/* Popup container */
+.updatepopup {
+    position: fixed;
+    bottom: 10%; /* Adjust using percentage for better responsiveness */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center the popup horizontally */
+    padding: 8px 20px;
+    background-color: #4CAF50; /* Default for up-to-date */
+    color: #254132;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    z-index: 9999;
+    display: none; /* Hidden by default, will be shown via JS */
+    width: 90%; /* Full width for smaller screens */
+    max-width: 400px; /* Limit maximum width for larger screens */
+    word-wrap: break-word;
+}
+ 
+/* Media query for larger screens */
+@media (min-width: 768px) {
+    .updatepopup {
+        width: 50%; /* Take half of the screen width */
+        max-width: 437px; /* Maintain original width as maximum */
+        bottom: 15%; /* Slightly adjust position for larger screens */
+    }
+}
+ 
+/* Media query for very large screens */
+@media (min-width: 1200px) {
+    .updatepopup {
+        width: 437px; /* Fixed width for large screens */
+        bottom: 390px; /* Original positioning */
+        left: 475px;
+        transform: none; /* Remove centering transform for larger screens */
+    }
+}
+ 
+ 
+/* Close button */
+.updateclose-btn {
+    background: transparent;
+    border: none;
+    color: #949491;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;      /* Set width of button */
+    height: 20px;     /* Set height of button */
+    display: flex;    /* Use flexbox to center the content */
+    align-items: center;  /* Vertically center */
+    justify-content: center;  /* Horizontally center */
+    text-align: center;  /* Ensure the 'X' is centered */
+    border-radius: 50%; /* Make it circular */
+}
+ 
+/* Optional: Add hover effect for better UX */
+.updateclose-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Slight dark background on hover */
+}
+ 
+ 
+.updatepopup.update {
+    background-color: #f8d753; /* Yellow for update */
+}
+ 
+.updatepopup.no-update {
+    background-color: #4CAF50; /* Green for up-to-date */
+}
+ 
+ 
+.header-actions {
+    display: flex;
+    gap: 15px; /* Space between buttons */
+    z-index: 10; /* Ensure links are clickable */
+}
+ 
+.action-button {
+    font-size: 14px;
+    color: #ffffff;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 4px 4px; /* Ensure clickable area */
+    display: inline-block; /* Makes the whole element clickable */
+}
+ 
+  .action-button:hover {
+    color: rgb(32, 67, 128); /* Hover effect */
+  }
+  
+ 
+  .redirect-wrapper {
+    display: none; /* Hide the wrapper by default */
+  }
+  
+  .redirect-wrapper.visible {
+    display: block; /* Show the wrapper when the 'visible' class is added */
+  }
+ 
+ 
+  /* Method Text Color Styles */
+.method-get {
+    font-size: 12px;
+    font-weight: bold; /* Make text bold */
+    color: #13c819; /* Green for GET */
+  }
+  
+  .method-post {
+    font-size: 12px;
+    font-weight: bold; /* Make text bold */
+    color: #0db1bd; /* Blue for POST */
+  }
+  
+  .method-put {
+    font-size: 12px;
+    font-weight: bold; /* Make text bold */
+    color: #ad6c0a; /* Orange for PUT */
+  }
+  
+  .method-patch {
+    font-size: 12px;
+    font-weight: bold; /* Make text bold */
+    color: #9816af; /* Purple for PATCH */
+  }
+  
+  .method-delete {
+    font-size: 12px;
+    font-weight: bold; /* Make text bold */
+    color: #b4190e; /* Red for DELETE */
+  }
+ 
+  .url-text {
+    font-family: monospace;
+    color: rgb(51, 51, 51);
+    font-size: 13px;
+    word-break: break-all;
+}
+ 
+/*//////
+
+
+/* Toast Container */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Toast Notification */
+.toast {
+    padding: 12px 22px; /* Adjust padding for better spacing */
+    border-radius: 8px; /* Rounded corners */
+    background-color: #333;
+    color: #fff;
+    font-size: 16px; /* Larger font size */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.1s ease-out, ease-out 2.5s;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: 300px; /* Fixed width */
+    min-height:30px; /* Minimum height */
+    max-width: 90%; /* Ensure it doesn't exceed 90% of the screen width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center; /* Center-align text */
+}
+
+/* Success - Green shades for success messages */
+.toast.success {
+    background: linear-gradient(45deg, #4CAF50, #1B5E20); /* Light to deep green */
+}
+
+/* Error - Red shades for errors */
+.toast.error {
+    background: linear-gradient(45deg, #F44336, #B71C1C); /* Bright to deep red */
+}
+
+/* Warning - Orange shades for warnings */
+.toast.warning {
+    background: linear-gradient(45deg, #FF9800, #E65100); /* Vibrant to deep orange */
+}
+
+/* Info - Teal instead of Blue for a fresh look */
+.toast.info {
+    background: linear-gradient(45deg, #009688, #00695C); /* Light to deep teal */
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+ 
+/* 1. Site Open Animation */
+body {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in forwards;
+}
+ 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+ 
+/* 2. Form Open/Close Animation */
+.redirect-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1.15s ease, opacity 0.5s ease;
+    opacity: 0;
+}
+ 
+.redirect-wrapper.visible {
+    max-height: 500px; /* Adjust based on your form height */
+    opacity: 1;
+}
+ 
+/* 3. Best Effects for Buttons */
+button {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+ 
+button:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+ 
+#addRedirect:hover {
+    background: linear-gradient(135deg, #2196F3, #10519b);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+ 
+#disableAllBtn:hover {
+    background: linear-gradient(135deg, #2196F3, #10519b);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+ 
+button.edit-btn:hover, button.delete-btn:hover {
+    background-color:#007bff; /* Background color */
+    box-shadow: 0 4px 10px rgba(5, 102, 229, 0.3);
+    color: #edf0f4;
+}
+ 
+#toggleButton:hover {
+    background-color: #f6c604;
+    transform: scale(1.9);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+}
+ 
+.redirect-item {
+    width: fit-content; /* Ensures the width is based on the content */
+    white-space: nowrap; /* Prevents text from wrapping to the next line */
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+}
+ 
+ 
+/* Search Input */
+.search-input {
+    padding: 5x; /* Padding inside the input */
+    border: 2px solid #8e8b8b; /* Light border with increased thickness */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    height: 20px; /* Adjust height for better proportions */
+    margin-left: 10px; /* Left margin */
+    margin-right: 20px; /* Right margin */
+    flex-grow: 1; /* Take up remaining space */
+    outline: none; /* Remove default focus outline */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for focus */
+}
+
+.search-input:focus {
+    border-color: #2e77a9; /* Change border color on focus */
+    box-shadow: 0 0 10px rgba(46, 119, 169, 0.5); /* Add a subtle glow on focus */
+}
+
+/* Method Badge */
+.method-badge {
+    display: inline-block; /* Ensure the badge behaves like a block */
+    padding: 2px 2px; /* Padding inside the badge */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 10px; /* Font size */
+    font-weight: bold; /* Bold text */
+    text-transform: uppercase; /* Uppercase method names */
+    color: white; /* Text color */
+    text-align: center; /* Center-align text */
+    min-width: 45px; /* Minimum width for the badge */
+    height: 16px; /* Set a fixed height */
+    line-height: 16px; /* Center text vertically */
+}
+
+/* GET - Green shades for retrieval operations */
+.method-get {
+    background: linear-gradient(45deg, #6ace6d, #338838); /* Light to deep green */
+}
+
+/* POST - Orange shades for data creation */
+.method-post {
+    background: linear-gradient(45deg, #FF9800, #E65100); /* Bright to deep orange */
+}
+
+/* PUT - Yellow-Gold for updates */
+.method-put {
+    background: linear-gradient(45deg, #FFD700, #FFA000); /* Gold to amber */
+}
+
+/* PATCH - Purple shades for partial updates */
+.method-patch {
+    background: linear-gradient(45deg, #8e6296, #b353ef); /* Vibrant to dark purple */
+}
+
+/* DELETE - Red shades for destructive operations */
+.method-delete {
+    background: linear-gradient(45deg, #e08482, #c30707); /* Bright to deep red */
+}
+
+
+.action-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust the gap between the toggle switch and buttons */
+}
+
+#customPopup {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 85%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(50deg, #38c244, #0a8e08);
+    padding: 0px 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1000;
+    width: 420px; /* Default width */
+    max-width: 90%; /* Responsive max-width */
+    text-align: center;
+    transition: opacity 0.5s ease-out, bottom 0.5s ease-out;
+    
+}
+
+.popup-content {
+    position: relative; /* Required for absolute positioning of the close button */
+}
+
+.popup-html-content {
+    text-align: left; /* Align HTML content to the left */
+    font-size: 16px;
+    line-height: 1.5;
+    color: white;
+}
+
+.close-btn {
+    position: absolute;
+    top: -17px; /* Half of the button's height to move it outside the popup */
+    right: -11px; /* Half of the button's width to move it outside the popup */
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff; /* White text for better contrast */
+    /* background-color: #e4d9d6; */ /* Background color */
+    border-radius: 50%;
+    width: 21px; /* Button width */
+    height: 21px; /* Button height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+}
+
+
+.close-btn:hover {
+    background-color: #e03a0e; /* Darker shade on hover */
+}
