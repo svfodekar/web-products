@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const copyBtn = document.getElementById('copy-btn');
     const keySearch = document.getElementById('key-search');
     const pathResults = document.getElementById('path-results');
-
+    const searchModeToggle = document.getElementById('search-mode');
+    let SearchMode = 'KEY';
+    let searchTermLast = '';
+    let currentKeyHighlights = [];
+    let currentKeyIndex = -1;
     let originalJson = '';
     let formattedJson = '';
 
@@ -27,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
             originalJson = input.value;
             const jsonObj = JSON.parse(originalJson);
             formattedJson = JSON.stringify(jsonObj, null, 2);
-            output.innerHTML = formatJsonToHtml(jsonObj, 0);
+            output.innerHTML = formatJsonToHtml(jsonObj, 0, '');
 
             // Show formatted output and hide input
             output.classList.remove('hidden');
@@ -94,16 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const lines = originalJson.split('\n');
                 const errorLineText = lines[errorLine] || '';
                 const errorIndicator = ' '.repeat(errorCol);
-
-                // errorLineDisplay.innerHTML = `
-                //     <div class="error-line">${escapeHtml(errorLineText)}</div>
-                   
-                // `;
-                // errorLineDisplay.classList.remove('hidden');
             }
-
-            // errorMessage.textContent = `Error: ${error.message}`;
-            // errorMessage.classList.remove('hidden');
 
         } catch (e) {
             // Fallback error display
@@ -113,35 +108,50 @@ document.addEventListener('DOMContentLoaded', function () {
             errorContext.classList.add('hidden');
         }
     }
+    searchModeToggle.addEventListener('change', function () {
+        SearchMode = this.checked ? 'VALUE' : 'KEY';
+        console.log('Search mode changed to:', SearchMode);
 
-    function formatJsonToHtml(obj, indent) {
+        // If there's an active search term, perform a new search
+        findKeyPaths();
+
+    });
+    function formatJsonToHtml(obj, indent, currentPath = '') {
         if (obj === null) return '<span class="null">null</span>';
         if (typeof obj === 'boolean') return `<span class="boolean">${obj}</span>`;
         if (typeof obj === 'number') return `<span class="number">${obj}</span>`;
         if (typeof obj === 'string') return `<span class="string">"${escapeHtml(obj)}"</span>`;
-
+    
         if (Array.isArray(obj)) {
             if (obj.length === 0) return '[]';
             let html = '[<span class="collapsible">-</span><div style="display:inline">';
             obj.forEach((item, i) => {
-                html += '\n' + '  '.repeat(indent + 1) + formatJsonToHtml(item, indent + 1);
+                const itemPath = `${currentPath}[${i}]`;
+                html += '\n' + '  '.repeat(indent + 1) + 
+                       `<span class="json-value" data-path="${escapeHtml(itemPath)}">` + 
+                       formatJsonToHtml(item, indent + 1, itemPath) + 
+                       '</span>';
                 if (i < obj.length - 1) html += ',';
             });
             return html + '\n' + '  '.repeat(indent) + ']</div>';
         }
-
+    
         if (typeof obj === 'object') {
             const keys = Object.keys(obj);
             if (keys.length === 0) return '{}';
             let html = '{<span class="collapsible">-</span><div style="display:inline">';
             keys.forEach((key, i) => {
-                html += '\n' + '  '.repeat(indent + 1) + `<span class="key">"${escapeHtml(key)}"</span>: ` +
-                    formatJsonToHtml(obj[key], indent + 1);
+                const keyPath = currentPath ? `${currentPath}.${key}` : key;
+                html += '\n' + '  '.repeat(indent + 1) + 
+                       `<span class="key highlight-target" data-path="${escapeHtml(keyPath)}">"${escapeHtml(key)}"</span>: ` + 
+                       `<span class="json-value" data-path="${escapeHtml(keyPath)}.value">` + 
+                       formatJsonToHtml(obj[key], indent + 1, keyPath) + 
+                       '</span>';
                 if (i < keys.length - 1) html += ',';
             });
             return html + '\n' + '  '.repeat(indent) + '}</div>';
         }
-
+    
         return '';
     }
 
@@ -256,17 +266,17 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(() => showToast('Failed to copy Json', 'error'));
     }
 
-    // Remove search button related code and add input event listener
-    keySearch.addEventListener('input', function () {
+    keySearch.addEventListener('input', function() {
         const searchTerm = this.value.trim().toLowerCase();
-
+        searchTermLast = searchTerm;
+        
         // Only search if at least 2 characters entered (adjust as needed)
-        if (searchTerm.length >= 2) {
+        if (searchTerm.length >= 1) {
             findKeyPaths();
-            // After adding items to DOM:
-            equalizePathWidths()
-        }
-        else if (pathResults) {
+            equalizePathWidths();
+        } else {
+            // Clear results if search term is too short
+            clearKeyHighlights();
             pathResults.classList.add('hidden');
         }
     });
@@ -275,9 +285,12 @@ document.addEventListener('DOMContentLoaded', function () {
     keySearch.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
             const searchTerm = keySearch.value.trim().toLowerCase();
-            if (searchTerm) {
+            if (searchTermLast != searchTerm &&  searchTerm) {
                 findKeyPaths();
                 equalizePathWidths();
+            }
+            else{
+                navigateKeyMatches(1);
             }
         }
     });
@@ -311,37 +324,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Debounce function to prevent excessive searches while typing
-    function debounce(func, timeout = 300) {
+    function debounce(func, timeout = 1000) {
         let timer;
         return (...args) => {
             clearTimeout(timer);
             timer = setTimeout(() => { func.apply(this, args); }, timeout);
         };
     }
-    function findKeyPaths() {
-        try {
-            const searchTerm = keySearch.value.trim().toLowerCase();
-            if (!searchTerm) return;
 
-            const jsonObj = JSON.parse(originalJson);
-            const paths = [];
-
-            if (Array.isArray(jsonObj)) {
-                // Handle root array
-                jsonObj.forEach((item, index) => {
-                    findPaths(item, `[${index}]`, paths, searchTerm, true);
-                });
-            } else {
-                // Handle root object
-                findPaths(jsonObj, '', paths, searchTerm, false);
-            }
-
-            displayPathResults(paths);
-        } catch (e) {
-            showToast('Please format valid JSON first');
-
-        }
-    }
 
     function findPaths(obj, currentPath, paths, searchTerm, isArrayElement) {
         if (typeof obj !== 'object' || obj === null) return;
@@ -392,23 +382,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function displayPathResults(paths) {
         pathResults.innerHTML = '';
-
+        
         if (paths.length === 0) {
-            pathResults.innerHTML = '<div class="path-item">No matching keys found</div>';
+            pathResults.innerHTML = '<div class="path-item">No matching ' + 
+                                  (SearchMode === 'KEY' ? 'keys' : 'values') + 
+                                  ' found</div>';
             return;
         }
-
+    
         const uniquePaths = [...new Set(paths)].sort();
-
+        
         uniquePaths.forEach(path => {
             const item = document.createElement('div');
-            item.className = 'path-item';
-
-            // Parse and colorize the path with alternating colors
+            item.className = 'path-container';
+            
+            // Create path display with syntax highlighting
+            const pathDisplay = document.createElement('div');
+            pathDisplay.className = 'path-display scrollable-path';
+            
             let htmlPath = '';
             const parts = path.split(/(\[|\]|\.)/).filter(Boolean);
             let keyColorIndex = 0;
-
+    
             parts.forEach((part, i) => {
                 if (part === '[' || part === ']') {
                     htmlPath += `<span class="bracket">${part}</span>`;
@@ -423,7 +418,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     htmlPath += `<span class="index">${part}</span>`;
                 }
                 else {
-                    // Alternate between 4 colors for keys
                     keyColorIndex = (keyColorIndex % 4) + 1;
                     const isRoot = i === 0 && !path.startsWith('[');
                     htmlPath += isRoot
@@ -431,30 +425,76 @@ document.addEventListener('DOMContentLoaded', function () {
                         : `<span class="key-${keyColorIndex}">${part}</span>`;
                 }
             });
+    
+            // Add value indicator if in value mode
+            if (SearchMode === 'VALUE') {
+                htmlPath += `<span class="value-indicator"></span>`;
+            }
+    
+            pathDisplay.innerHTML = htmlPath;
+    
+            // Create buttons container
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'path-buttons';
 
-            item.innerHTML = htmlPath;
-
-            // Enhanced copy functionality
-            item.addEventListener('click', (e) => {
+            // Create Copy Path button
+            const copyPathBtn = document.createElement('button');
+            copyPathBtn.className = 'copy-path-btn';
+            copyPathBtn.innerHTML = 'Copy Path';
+            copyPathBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 navigator.clipboard.writeText(path).then(() => {
-                    const originalBg = item.style.backgroundColor;
-                    item.style.backgroundColor = '#d1e7dd';
-                    item.innerHTML = 'Copied!';
-                    showToast('Path copied to clipboard!', 'success')
+                    showToast('Path copied to clipboard!', 'success');
+                    copyPathBtn.textContent = 'Copied!';
                     setTimeout(() => {
-                        item.style.backgroundColor = originalBg;
-                        item.innerHTML = htmlPath;
+                        copyPathBtn.textContent = 'Copy Path';
                     }, 1000);
-                }).catch(err => {
-                    console.error('Failed to copy:', err);
                 });
             });
 
+            // Create Copy Value button
+            const copyValueBtn = document.createElement('button');
+            copyValueBtn.className = 'copy-value-btn';
+            copyValueBtn.innerHTML = 'Copy Value';
+            copyValueBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                try {
+                    const jsonObj = JSON.parse(originalJson);
+                    const value = getValueByPath(jsonObj, path);
+                    const valueStr = typeof value === 'object' ? JSON.stringify(value, null, 2) : value;
+                    navigator.clipboard.writeText(valueStr).then(() => {
+                        showToast('Value copied to clipboard!', 'success');
+                        copyValueBtn.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyValueBtn.textContent = 'Copy Value';
+                        }, 1000);
+                    });
+                } catch (e) {
+                    showToast('Failed to copy value', 'error');
+                }
+            });
+
+            // Helper function to get value by path
+            function getValueByPath(obj, path) {
+                const parts = path.split(/[\.\[\]]/).filter(Boolean);
+                let current = obj;
+                for (const part of parts) {
+                    if (current === undefined) break;
+                    current = current[part];
+                }
+                return current;
+            }
+
+            // Append elements
+            buttonsContainer.appendChild(copyPathBtn);
+            buttonsContainer.appendChild(copyValueBtn);
+            item.appendChild(pathDisplay);
+            item.appendChild(buttonsContainer);
             pathResults.appendChild(item);
         });
 
         pathResults.classList.remove('hidden');
+
     }
 
     // Close dropdown when clicking outside
@@ -488,68 +528,323 @@ function initToastContainer() {
  * @param {string} type - 'success' | 'error' | 'warning' | 'info'
  * @param {number} duration - Display duration in ms (0 = persistent)
  */
-function showToast(message, type = 'info', duration = 3000) {
-    const container = initToastContainer();
-    
-    // Create toast element
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    
-    // Add progress bar if duration is set
-    if (duration > 0) {
-        toast.innerHTML = `
+    function showToast(message, type = 'info', duration = 3000) {
+        const container = initToastContainer();
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+
+        // Add progress bar if duration is set
+        if (duration > 0) {
+            toast.innerHTML = `
             ${message}
             <button class="toast-close" aria-label="Close">&times;</button>
             <div class="toast-progress">
                 <div class="toast-progress-bar"></div>
             </div>
         `;
-    } else {
-        toast.innerHTML = `
+        } else {
+            toast.innerHTML = `
             ${message}
             <button class="toast-close" aria-label="Close">&times;</button>
         `;
-    }
-    
-    container.appendChild(toast);
-    
-    // Trigger animation
-    setTimeout(() => {
-        toast.classList.add('show');
-        
-        // Animate progress bar
-        if (duration > 0) {
-            const progressBar = toast.querySelector('.toast-progress-bar');
-            progressBar.style.transform = 'scaleX(0)';
-            progressBar.style.transition = `transform ${duration}ms linear`;
-            setTimeout(() => progressBar.style.transform = 'scaleX(1)', 10);
         }
-    }, 10);
-    
-    // Close button handler
-    toast.querySelector('.toast-close').addEventListener('click', () => {
-        hideToast(toast);
-    });
-    
-    // Auto-hide after duration
-    if (duration > 0) {
+
+        container.appendChild(toast);
+
+        // Trigger animation
         setTimeout(() => {
+            toast.classList.add('show');
+
+            // Animate progress bar
+            if (duration > 0) {
+                const progressBar = toast.querySelector('.toast-progress-bar');
+                progressBar.style.transform = 'scaleX(0)';
+                progressBar.style.transition = `transform ${duration}ms linear`;
+                setTimeout(() => progressBar.style.transform = 'scaleX(1)', 10);
+            }
+        }, 10);
+
+        // Close button handler
+        toast.querySelector('.toast-close').addEventListener('click', () => {
             hideToast(toast);
-        }, duration);
+        });
+
+        // Auto-hide after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                hideToast(toast);
+            }, duration);
+        }
+
+        return {
+            close: () => hideToast(toast)
+        };
+    }
+
+    function hideToast(toast) {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+        setTimeout(() => {
+            toast.remove();
+        }, 400);
+    }
+
+    function findKeyPaths() {
+        try {
+            const searchTerm = keySearch.value.trim().toLowerCase();
+            clearKeyHighlights();
+            if (!searchTerm) {
+                return;
+            }
+    
+            const jsonObj = JSON.parse(originalJson);
+            currentKeyHighlights = [];
+            currentKeyIndex = 0;
+    
+            if (SearchMode === 'KEY') {
+                findAllKeys(jsonObj, '', searchTerm);
+            } else {
+                // For value search, we need to look at string values
+                findAllKeys(jsonObj, '', searchTerm);
+            }
+    
+            navigateKeyMatches(0);
+    
+        } catch (e) {
+            showToast('Please format valid JSON first');
+        }
+    }
+
+function findAllKeys(obj, currentPath = '', searchTerm = '') {
+    if (typeof obj !== 'object' || obj === null) return;
+
+    Object.keys(obj).forEach(key => {
+        const formattedKey = Array.isArray(obj) ? `[${key}]` : key;
+        const newPath = currentPath 
+            ? `${currentPath}${Array.isArray(obj) ? '' : '.'}${formattedKey}`
+            : formattedKey;
+
+        // Check if we should search in keys or values
+        if (SearchMode === 'KEY') {
+            // Search in keys
+            if (key.toLowerCase().includes(searchTerm.toLowerCase())) {
+                currentKeyHighlights.push(newPath);
+            }
+        } else {
+            // Search in values
+            const value = obj[key];
+            if (typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase())) {
+                // For values, we'll highlight the value element which has .value in its path
+                currentKeyHighlights.push(`${newPath}.value`);
+            }
+        }
+
+        // Recursively search nested objects/arrays
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            findAllKeys(obj[key], newPath, searchTerm);
+        }
+    });
+    }
+
+    async function highlightKeyMatches() {
+        // Remove previous highlights
+        document.querySelectorAll('.key-highlight').forEach(el => {
+            el.classList.remove('key-highlight', 'current-key-highlight');
+        });
+    
+        // Keep dropdown visible
+       pathResults.classList.remove('hidden');
+    
+        // Add new highlights
+        currentKeyHighlights.forEach((path, index) => {
+            // For value search, we need to find the value element
+            const selector = SearchMode === 'VALUE' && path.endsWith('.value') 
+                ? `[data-path="${escapeHtml(path)}"]` 
+                : `[data-path="${escapeHtml(path)}"]`;
+                
+            const element = document.querySelector(selector);
+            if (element) {
+                element.classList.add('key-highlight');
+                if (index === currentKeyIndex) {
+                    element.classList.add('current-key-highlight');
+                    // For value search, show the full path without .value suffix
+                    const displayPath = SearchMode === 'VALUE' ? path.replace(/\.value$/, '') : path;
+                    displayPathResults([displayPath]);
+                    
+                    // Ensure dropdown stays visible after updating results
+                   pathResults.classList.remove('hidden');
+                }
+            }
+        });
+
     }
     
-    return {
-        close: () => hideToast(toast)
-    };
+
+
+    async function navigateKeyMatches(direction) {
+
+        currentKeyIndex += direction;
+
+        // Wrap around
+        if (currentKeyIndex < 0) {
+            currentKeyIndex = currentKeyHighlights.length - 1;
+        }
+        else if (currentKeyIndex >= currentKeyHighlights.length) {
+            currentKeyIndex = 0;
+        }
+
+        await highlightKeyMatches();
+        scrollToCurrentKey();
+        if (currentKeyHighlights.length == 0) {
+            displayPathResults([])
+        }
+    }
+
+    function scrollToCurrentKey() {
+        const currentElement = document.querySelector('.current-key-highlight');
+        if (currentElement) {
+            currentElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    }
+
+    function clearKeyHighlights() {
+        document.querySelectorAll('.key-highlight').forEach(el => {
+            el.classList.remove('key-highlight', 'current-key-highlight');
+        });
+    currentKeyHighlights = [];
+    currentKeyIndex = -1;
 }
 
-function hideToast(toast) {
-    toast.classList.remove('show');
-    toast.classList.add('hide');
-    setTimeout(() => {
-        toast.remove();
-    }, 400);
+// Add these event listeners (keep your existing ones too)
+document.getElementById('prev-match').addEventListener('click', () => navigateKeyMatches(-1));
+document.getElementById('next-match').addEventListener('click', () => navigateKeyMatches(1));
+
+// Add this with your other button declarations
+const expandCollapseBtn = document.getElementById('expand-collapse-btn');
+
+// Initialize state - JSON starts expanded
+let isAllExpanded = true;
+expandCollapseBtn.textContent = 'Collapse';
+
+// Add this event listener with your other button listeners
+expandCollapseBtn.addEventListener('click', toggleExpandAll);
+
+function toggleExpandAll() {
+    const collapsibles = document.querySelectorAll('.collapsible');
+    const contents = document.querySelectorAll('.collapsible + div');
+    
+    if (isAllExpanded) {
+        // Collapse all
+        collapsibles.forEach(btn => {
+            btn.textContent = '+';
+        });
+        contents.forEach(content => {
+            content.style.display = 'none';
+        });
+        expandCollapseBtn.textContent = 'Expand';
+    } else {
+        // Expand all
+        collapsibles.forEach(btn => {
+            btn.textContent = '-';
+        });
+        contents.forEach(content => {
+            content.style.display = 'inline';
+        });
+        expandCollapseBtn.textContent = 'Collapse';
+    }
+    
+    isAllExpanded = !isAllExpanded;
 }
+
+// Modify your setupCollapsibleListeners function
+function setupCollapsibleListeners() {
+    // JSON starts expanded
+    isAllExpanded = true;
+    expandCollapseBtn.textContent = 'Collapse';
+    
+    document.querySelectorAll('.collapsible').forEach(btn => {
+        // Initialize all as expanded
+        btn.textContent = '-';
+        const content = btn.nextElementSibling;
+        content.style.display = 'inline';
+        
+        btn.addEventListener('click', function() {
+            const content = this.nextElementSibling;
+            if (this.textContent === '-') {
+                this.textContent = '+';
+                content.style.display = 'none';
+            } else {
+                this.textContent = '-';
+                content.style.display = 'inline';
+            }
+            
+            updateExpandCollapseButtonState();
+        });
+    });
+}
+
+function updateExpandCollapseButtonState() {
+    const collapsibles = [...document.querySelectorAll('.collapsible')];
+    const allCollapsed = collapsibles.every(btn => btn.textContent === '+');
+    const allExpanded = collapsibles.every(btn => btn.textContent === '-');
+    
+    if (allCollapsed) {
+        isAllExpanded = false;
+        expandCollapseBtn.textContent = 'Expand';
+    } else if (allExpanded) {
+        isAllExpanded = true;
+        expandCollapseBtn.textContent = 'Collapse';
+    } else {
+        // Mixed state - show "Expand" since partial collapse is closer to collapsed state
+        isAllExpanded = false;
+        expandCollapseBtn.textContent = 'Expand';
+    }
+}
+
+// Add this with your other button declarations
+const clearBtn = document.getElementById('clear-btn');
+
+// Add this event listener with your other button listeners
+clearBtn.addEventListener('click', clearAll);
+
+function clearAll() {
+    // Clear the JSON input
+    input.value = '';
+    originalJson = '';
+    formattedJson = '';
+    
+    // Clear search results
+    keySearch.value = '';
+    pathResults.innerHTML = '';
+    pathResults.classList.add('hidden');
+    currentKeyHighlights = [];
+    currentKeyIndex = -1;
+    
+    // Reset to raw view
+    input.classList.remove('hidden');
+    output.classList.add('hidden');
+    
+    // Clear any errors
+    errorMessage.classList.add('hidden');
+    errorLineDisplay.classList.add('hidden');
+    errorContext.classList.add('hidden');
+    
+    // Reset expand/collapse button
+    isAllExpanded = true;
+    expandCollapseBtn.textContent = 'Collapse';
+    
+    // Focus back on the input field
+    input.focus();
+    
+    // Show confirmation toast
+    showToast('Cleared all content', 'info');
+}
+
+
 });
-
 
