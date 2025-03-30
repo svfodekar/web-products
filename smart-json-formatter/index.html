@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>JSON Formatter</title>
+    <title>Smart JSON Formatter</title>
     <link rel="icon" type="image/png" href="json-logo2.png">
     <link rel="stylesheet" href="app.css">
 </head>
+
 <body>
     <div class="container">
-        <h1>JSON Formatter </h1>
+        <h1>Smart JSON Formatter </h1>
         <div class="controls">
             <button id="raw-btn">Input Text</button>
             <button id="format-btn">Format JSON</button>
@@ -15,7 +17,24 @@
             <div class="search-container">
                 <input type="text" id="key-search" placeholder="Enter key to get path...">
                 <div id="path-results" class="hidden"></div>
+                <div class="search-nav">
+                    <button id="prev-match" title="Previous match">↑</button>
+                    <button id="next-match" title="Next match">↓</button>
+                </div>
+                <span class="search-by-text">Search by </span>
+                <div class="toggle-container">
+                    <label class="square-toggle">
+                        <input type="checkbox" id="search-mode">
+                        <div class="toggle-options">
+                            <span class="option key-option">Key</span>
+                            <span class="option value-option">Value</span>
+                        </div>
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
             </div>
+            <button id="expand-collapse-btn">Collapse</button> 
+            <button id="clear-btn">Clear</button> 
         </div>
         <div class="editor-container">
             <textarea id="input" placeholder=" Paste your JSON here..."></textarea>
@@ -27,4 +46,5 @@
     </div>
     <script src="app.js"></script>
 </body>
+
 </html>
