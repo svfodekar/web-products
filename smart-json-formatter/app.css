@@ -142,7 +142,6 @@ textarea, #output {
     border: 1px solid #ddd;
     border-radius: 4px;
     max-height: 200px;
-    overflow-y: auto;
     z-index: 10;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -155,6 +154,19 @@ textarea, #output {
     border-radius: 2px;
     cursor: pointer;
 }
+
+/* Previous button (orange) */
+#prev-match {
+    background: #4CAF50;
+    /* Space between buttons */
+}
+
+/* Next button (blue) */
+#next-match {
+    background: #2196F3;
+    /* Blue */
+}
+
 /* Add this to ensure proper positioning within the search container */
 .search-container {
     position: relative;
@@ -182,7 +194,7 @@ textarea, #output {
     border: 1px solid #dee2e6;
     border-radius: 4px;
     max-height: 300px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
@@ -197,8 +209,8 @@ textarea, #output {
     border: 1px solid #ddd;
     border-radius: 4px;
     max-height: 200px;
-    overflow-y: auto; /* Vertical scroll */
-    overflow-x: auto; /* Horizontal scroll */
+    /* overflow-y: auto; /* Vertical scroll */
+    /* overflow-x: auto; Horizontal scroll */ 
     z-index: 10;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -215,20 +227,20 @@ textarea, #output {
     display: inline-block; /* Needed for min-width to work */
 }
 
-.path-item:hover {
+/* .path-item:hover {
     background: #e9ecef;
     width: auto; /* Allow expansion beyond container */
-}
+/* } */ */
 
 /* Optional: Style scrollbars */
-#path-results::-webkit-scrollbar {
-    height: 5px; /* Horizontal scrollbar height */
-    width: 5px; /* Vertical scrollbar width */
+#path-container::-webkit-scrollbar {
+    height: 2px; /* Horizontal scrollbar height */
+    width: 2px; /* Vertical scrollbar width */
 }
 
-#path-results::-webkit-scrollbar-thumb {
+#path-container::-webkit-scrollbar-thumb {
     background: #c1c1c1;
-    border-radius: 10px;
+    border-radius: 2px;
 }
 /* Syntax Coloring */
 .path-item .bracket { color: #6c757d; }          /* Gray for brackets */
@@ -249,7 +261,6 @@ textarea, #output {
     border: 1px solid #dee2e6;
     border-radius: 4px;
     max-height: 300px;
-    overflow-y: auto;
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     font-family: 'Fira Code', 'Consolas', monospace;
@@ -338,8 +349,10 @@ button {
 }
 
 button:hover {
-    transform: translateY(-2px);
+    /* transform: translateY(-2px); */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 button:active {
@@ -353,7 +366,7 @@ button:active {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 #raw-btn:hover {
-    background: #0d8bf2;
+    background: #0360ab;
     box-shadow: 0 3px 6px rgba(33, 150, 243, 0.3);
 }
 
@@ -362,7 +375,7 @@ button:active {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 #copy-btn:hover {
-    background: #fb8c00;
+    background: #995501;
     box-shadow: 0 3px 6px rgba(255, 152, 0, 0.3);
 }
 
@@ -617,3 +630,435 @@ button:active {
 }
 
 
+/* Search Container */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Input field */
+#key-search {
+    flex: 1;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    box-sizing: border-box;
+}
+
+/* Toggle Container */
+.toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Toggle Switch */
+.square-toggle {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+    height: 34px;
+}
+
+.square-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-options {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    z-index: 1;
+    transition: color 0.3s;
+}
+
+.toggle-slider {
+    position: absolute;
+    width: 60px; /* Exactly half of 120px */
+    height: 32px; /* 2px less than container for border */
+    background: #4CAF50;
+    transition: transform 0.3s ease;
+    z-index: 0;
+    top: 1px;
+    left: 1px;
+    border-radius: 3px;
+}
+
+/* Key mode (unchecked) */
+.square-toggle input:not(:checked) ~ .toggle-slider {
+    transform: translateX(0);
+    background: #4CAF50;
+}
+
+.square-toggle input:not(:checked) ~ .toggle-options .key-option {
+    color: white;
+}
+
+/* Value mode (checked) */
+.square-toggle input:checked ~ .toggle-slider {
+    transform: translateX(calc(60px - 2px)); /* Account for border */
+    background: #2196F3;
+}
+
+.square-toggle input:checked ~ .toggle-options .value-option {
+    color: white;
+}
+
+/* Path results container */
+#path-results {
+    max-height: 300px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background: white;
+    width: 100%; /* Ensure full width */
+}
+
+.path-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+    position: relative; /* For absolute positioning of buttons */
+    scrollbar-width: thin;
+    scrollbar-color: #f6f4f5 transparent;
+}
+
+.path-container:last-child {
+    border-bottom: none;
+}
+
+.scrollable-path {
+    flex-grow: 1;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-right: 120px; /* Make space for buttons */
+    margin-right: 5px;
+}
+
+.path-buttons {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    /* width: 80px; Fixed width for both buttons */
+}
+
+.copy-path-btn, .copy-value-btn {
+    padding: 5px 8px;
+    font-size: 10px;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+    width: 100%; /* Full width of container */
+    text-align: center;
+}
+
+/* Different colors for each button */
+.copy-path-btn {
+    background: #e68a00; /* Green for path */
+}
+
+.copy-value-btn {
+    background:  #2196F3;/* Blue for value */
+}
+
+.copy-path-btn:hover {
+    background: #9b5d00;
+}
+
+.copy-value-btn:hover {
+    background: #01589f;
+}
+
+/* Keep your existing syntax highlighting classes */
+.bracket, .dot, .wildcard, .index, .root, .key-1, .key-2, .key-3, .key-4 {
+    /* Your existing styles */
+}
+/* Syntax Highlighting Colors */
+.bracket {
+    color: #6c757d;  /* Gray for brackets */
+}
+
+.dot {
+    color: #6c757d;  /* Gray for dots */
+}
+
+.wildcard {
+    color: #fd7e14;  /* Orange for wildcards (*) */
+}
+
+.index {
+    color: #0d6efd;  /* Blue for array indices */
+}
+
+.root {
+    color: #6f42c1;  /* Purple for root keys */
+    font-weight: bold;
+}
+
+.key-1 {
+    color: #198754;  /* Green for first nested key */
+}
+
+.key-2 {
+    color: #d63384;  /* Pink for second nested key */
+}
+
+.key-3 {
+    color: #0dcaf0;  /* Cyan for third nested key */
+}
+
+.key-4 {
+    color: #ffc107;  /* Yellow for fourth nested key */
+}
+
+/* Additional visual improvements */
+.scrollable-path {
+    /* background-color: #f8f9fa; */
+    /* padding: 6px 10px; */
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+/* .path-container:hover {
+    background-color: #f0f0f0;
+} */
+
+/* Button colors matching syntax */
+.copy-path-btn {
+    color: white;
+}
+
+.copy-value-btn {
+    color: white;
+}
+
+.highlight-target {
+    position: relative;
+}
+
+.highlight-target::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    border-radius: 2px;
+}
+
+.key-highlight .highlight-target::after {
+    background-color: #2196F3;
+}
+
+.key-highlight {
+    background-color:  #f4f2d5;
+}
+
+.current-key-highlight .highlight-target::after {
+    background-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.3);
+}
+
+.current-key-highlight  {
+    background-color: #ffea00;
+}
+
+/* Base button styles for ALL buttons */
+button {
+    padding: 8px 15px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1;
+}
+
+/* Glow and darken effect */
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(255,255,255,0.1), rgba(0,0,0,0.1));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+button:hover::before {
+    opacity: 1;
+}
+
+/* Common hover effect */
+button:hover {
+    filter: brightness(95%); /* Darken slightly */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Active state */
+button:active {
+    transform: translateY(0);
+    filter: brightness(1000%);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Button-specific colors with glow */
+#raw-btn {
+    background: #2196F3;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+}
+#raw-btn:hover {
+    box-shadow: 0 5px 20px rgba(33, 150, 243, 0.6);
+}
+
+#format-btn {
+    background: #4CAF50;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+#format-btn:hover {
+    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.6);
+}
+
+#copy-btn {
+    background: #FF9800;
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+}
+#copy-btn:hover {
+    box-shadow: 0 5px 20px rgba(255, 152, 0, 0.6);
+}
+
+#prev-match {
+    background: #9C27B0;
+    box-shadow: 0 2px 8px rgba(156, 39, 176, 0.4);
+}
+#prev-match:hover {
+    box-shadow: 0 5px 20px rgba(156, 39, 176, 0.6);
+}
+
+#next-match {
+    background: #3F51B5;
+    box-shadow: 0 2px 8px rgba(63, 81, 181, 0.4);
+}
+#next-match:hover {
+    box-shadow: 0 5px 20px rgba(63, 81, 181, 0.6);
+}
+
+/* Small buttons */
+.copy-path-btn, .copy-value-btn {
+    padding: 5px 8px;
+    font-size: 10px;
+}
+.copy-path-btn {
+    background: #607D8B;
+    box-shadow: 0 1px 5px rgba(96, 125, 139, 0.4);
+}
+.copy-path-btn:hover {
+    box-shadow: 0 3px 10px rgba(96, 125, 139, 0.6);
+}
+.copy-value-btn {
+    background: #009688;
+    box-shadow: 0 1px 5px rgba(0, 150, 136, 0.4);
+}
+.copy-value-btn:hover {
+    box-shadow: 0 3px 10px rgba(0, 150, 136, 0.6);
+}
+
+/* Optional: Pulse animation on hover */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+button:hover::after {
+    content: '';
+    position: absolute;
+    border-radius: 4px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    animation: pulse 1.5s infinite;
+}
+
+.search-by-text {
+    font-family: Arial, sans-serif; /* Match button font */
+    font-size: 14px; /* Match button font size */
+    font-weight: 500; /* Match button font weight */
+    color: #555; /* Slightly darker than button text for better contrast */
+    margin-left: 5px; /* Add some spacing from the nav buttons */
+    vertical-align: middle; /* Align properly with toggle */
+    line-height: 34px; /* Match button height for vertical alignment */
+}
+
+#expand-collapse-btn {
+    padding: 8px 15px;
+    background: #607D8B;  /* Different color to distinguish it */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#expand-collapse-btn:hover {
+    background: #2b3a40;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#clear-btn {
+    padding: 8px 15px;
+    background: #f44336;  /* Red color for clear action */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#clear-btn:hover {
+    background: #9b1818;  /* Darker red on hover */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
