@@ -1062,3 +1062,212 @@ button:hover::after {
     background: #9b1818;  /* Darker red on hover */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+
+/* Base styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    width: 60%;
+    margin: 0 20%;
+    height: 100vh;
+    background: white;
+    padding: 0;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    color: #333;
+    margin: 0;
+    padding: 10px 0;
+    padding-left: 15px;
+    font-size: 1.5em;
+}
+
+/* Responsive controls */
+.controls {
+    padding: 0 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+/* Button styles */
+button {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    min-width: fit-content;
+}
+
+/* Specific button colors */
+#format-btn { background: #4CAF50; }
+#raw-btn { background: #2196F3; }
+#copy-btn { background: #ff9800; }
+#prev-match { background: #9C27B0; }
+#next-match { background: #3F51B5; }
+#expand-collapse-btn { background: #607D8B; }
+#clear-btn { background: #f44336; }
+
+/* Button hover effects */
+button:hover {
+    filter: brightness(95%);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Editor area */
+.editor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 15px 15px;
+    overflow: hidden;
+}
+
+textarea, #output {
+    width: 100%;
+    flex: 1;
+    padding: 8px;
+    font-size: 0.9em;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: Consolas, monospace;
+}
+
+/* Search container */
+.search-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    flex-grow: 1;
+    min-width: 200px;
+}
+
+#key-search {
+    padding: 6px 25px 6px 10px;
+    font-size: 0.9em;
+    flex: 1;
+    min-width: 150px;
+}
+
+.option {
+    font-size: 0.8em;
+}
+
+/* Path results */
+.path-buttons {
+    right: 5px;
+}
+
+.copy-path-btn, .copy-value-btn {
+    padding: 3px 6px;
+    font-size: 0.7em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .container {
+        width: 80%;
+        margin: 0 10%;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        margin: 0 2.5%;
+    }
+    
+    .controls {
+        gap: 6px;
+    }
+    
+    button {
+        padding: 5px 10px;
+        font-size: 0.8em;
+    }
+    
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.3em;
+        padding: 8px 0 8px 10px;
+    }
+    
+    .controls {
+        padding: 0 10px;
+    }
+    
+    button {
+        padding: 4px 8px;
+        font-size: 0.75em;
+    }
+    
+    #key-search {
+        min-width: 120px;
+        font-size: 0.8em;
+    }
+    
+
+    .search-by-text {
+        display: none;
+    }
+}
+
+/* Base button style with consistent rounded corners */
+button {
+    border-radius: 6px; /* Same rounding on all corners */
+}
+
+/* Specific button types */
+#format-btn,
+#raw-btn,
+#copy-btn,
+#prev-match,
+#next-match,
+#expand-collapse-btn,
+#clear-btn {
+    border-radius: 6px; /* All main buttons */
+}
+
+/* Small buttons */
+.copy-path-btn,
+.copy-value-btn {
+    border-radius: 4px; /* Slightly less rounded for smaller buttons */
+}
+
+/* Input fields to match */
+#key-search {
+    border-radius: 6px;
+}
+
+/* Toggle elements */
+.toggle-slider {
+    border-radius: 4px; /* Slightly rounded */
+}
+
+/* Special cases */
+.clear-search {
+    border-radius: 50%; /* Perfect circle for X button */
+}
+
+.collapsible {
+    border-radius: 3px; /* Minimal rounding */
+}
