@@ -50,7 +50,6 @@ button {
 textarea, #output {
     width: 100%;
     flex: 1;
-    padding: 10px 0px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-family: Consolas, monospace;
@@ -209,7 +208,7 @@ textarea, #output {
     border: 1px solid #ddd;
     border-radius: 4px;
     max-height: 200px;
-    /* overflow-y: auto; /* Vertical scroll */
+    overflow-y: auto;
     /* overflow-x: auto; Horizontal scroll */ 
     z-index: 10;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
