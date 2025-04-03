@@ -6,6 +6,7 @@ body {
     background-color: white;
 
 }
+
 .main {
     max-width: 60%;
     margin: auto;
@@ -27,16 +28,19 @@ body {
     color: white;
     border-radius: 10px;
 }
+
 .header .logo-title {
     display: flex;
     align-items: center;
     gap: 15px;
 }
+
 .header img {
     width: 60px;
     height: 50px;
     border-radius: 20%;
 }
+
 .header button {
     background: #e87629;
     border: none;
@@ -46,6 +50,7 @@ body {
     cursor: pointer;
     font-size: 14px;
 }
+
 .header button:hover {
     background: #e84147;
 }
@@ -54,6 +59,7 @@ body {
 .work-section {
     margin-top: 20px;
 }
+
 .work-sec-header {
     display: flex;
     align-items: center;
@@ -67,26 +73,32 @@ body {
     background: #f4f4f4;
     margin-top: -5px;
 }
+
 .work-sec-header label {
     font-weight: bold;
 }
-.work-sec-header select, .work-sec-header button {
+
+.work-sec-header select,
+.work-sec-header button {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
 }
+
 .work-sec-header button {
     background: #007bff;
     color: white;
     cursor: pointer;
 }
+
 .work-sec-header button:hover {
     background: #0056b3;
 }
 
 /* Terminal & Config Sections */
-.terminal, .config {
+.terminal,
+.config {
     display: none;
     padding: 20px;
     height: 90%;
@@ -96,7 +108,9 @@ body {
     border: 1px solid #ccc;
     background: #f4f4f4;
 }
-.terminal.active, .config.active {
+
+.terminal.active,
+.config.active {
     display: block;
 }
 
@@ -107,10 +121,12 @@ body {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
-    font-weight: bold; /* Makes text bold */
+    font-weight: bold;
+    /* Makes text bold */
     color: rgb(51, 50, 50);
     margin-top: 10px;
-    box-sizing: border-box; /* Ensures width includes padding and border */
+    box-sizing: border-box;
+    /* Ensures width includes padding and border */
     transition: background-color 0.3s ease, border 0.3s ease;
     font-family: "Courier New", monospace;
     font-size: 14px !important;
@@ -118,9 +134,12 @@ body {
 
 /* Change background color on focus */
 .cmd-section input:focus {
-    background-color: #f5dac0; /* Light grey background */
-    border: 1px solid #bfbdbd; /* Slightly darker border */
-    outline: none; /* Removes default blue outline */
+    background-color: #f5dac0;
+    /* Light grey background */
+    border: 1px solid #bfbdbd;
+    /* Slightly darker border */
+    outline: none;
+    /* Removes default blue outline */
 }
 
 
@@ -135,7 +154,8 @@ body {
     overflow-y: auto;
     color: rgb(207, 204, 204);
     font-family: "Courier New", monospace;
-    font-size: 14px !important; /* Ensure font size is applied */
+    font-size: 14px !important;
+    /* Ensure font size is applied */
     line-height: 1.4;
 }
 
@@ -164,6 +184,7 @@ body {
     margin-bottom: 8px;
     font-weight: bold;
 }
+
 .config input {
     width: 100%;
     padding: 12px;
@@ -179,7 +200,7 @@ body {
     height: 500px;
     border-radius: 8px;
     border: 1px solid #ccc;
-    
+
 }
 
 .config label {
@@ -210,7 +231,8 @@ body {
     border-radius: 5px;
     cursor: pointer;
     width: 40%;
-    text-align: center; /* Centers inline elements */
+    text-align: center;
+    /* Centers inline elements */
     margin-left: 30%;
     margin-top: 16px;
     font-size: 16px;
@@ -223,13 +245,13 @@ body {
 .config-message {
     font-size: 18px;
     color: #f6f4f4;
-    background:  #3f8650;
+    background: #3f8650;
     padding: 10px;
     border-radius: 5px;
     text-align: center;
     margin-top: -20px;
     font-weight: bold;
- 
+
     margin-top: 10px;
 }
 
@@ -249,7 +271,8 @@ body {
     font-size: 14px;
 }
 
-#repoSelect, #branchSelect {
+#repoSelect,
+#branchSelect {
     width: 100%;
     position: absolute;
     top: 100%;
@@ -260,9 +283,12 @@ body {
     display: none;
     max-height: 150px;
     overflow-y: auto;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    white-space: nowrap; /* Prevent text wrapping */
-    z-index: 1000; /* Ensure dropdown appears above other elements */
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+    white-space: nowrap;
+    /* Prevent text wrapping */
+    z-index: 1000;
+    /* Ensure dropdown appears above other elements */
 }
 
 
@@ -286,6 +312,7 @@ body {
 #branchSelect {
     width: 112%;
 }
+
 #branchInput {
     width: 100%;
     padding: 8px;
@@ -314,13 +341,16 @@ body {
 .cmd-section {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between input and button */
+    gap: 10px;
+    /* Space between input and button */
     width: 100%;
 }
+
 #clearButton {
     padding: 10px 15px;
     font-size: 14px;
-    height: 40.5px; /* Same height as input field */
+    height: 40.5px;
+    /* Same height as input field */
     background-color: rgb(218, 98, 13);
     color: white;
     border: none;
@@ -347,7 +377,67 @@ body {
 }
 
 #feedbackButton:hover {
-    color: darkorange; /* Changes to a darker shade on hover */
+    color: darkorange;
+    /* Changes to a darker shade on hover */
+}
+
+.github-token-link {
+    display: flex;
+    align-items: baseline;
+}
+
+.github-token-link a {
+    font-size: 14px;
+    margin-left: 13px;
+    color: #f6a541;
 }
 
 
+.tip {
+    display: flex;
+    align-items: baseline;
+    font-size: 14px;
+    margin-left: 13px;
+    color: #585756;
+}
+
+.work-sec-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between; /* Ensures even spacing */
+    gap: 15px; /* Controls the spacing */
+    max-width: 100%; /* Allows responsiveness */
+    padding: 10px;
+}
+
+.repo-container,
+.branch-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allows automatic stretching */
+    min-width: 150px; /* Prevents elements from becoming too small */
+    max-width: 300px; /* Prevents excessive growth */
+}
+
+button {
+    flex-shrink: 0; /* Prevents buttons from shrinking */
+    padding: 8px 12px;
+    white-space: nowrap; /* Keeps text readable */
+}
+
+input, select {
+    width: 100%; /* Makes inputs stretch properly */
+    padding: 5px;
+}
+
+.dropdown {
+    width: 100%; /* Ensures dropdown takes full width */
+}
+
+.repo-inputes {
+    display: flex;
+    align-items: center; /* Align label and input vertically */
+    gap: 10px; /* Fixed gap between label and input */
+    flex-grow: 1; /* Makes input sections expand */
+}
