@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
     let originalJson = '';
     let formattedJson = '';
 
+
+    // document.querySelector('.loader').style.display = 'block';
+    document.querySelector('.loader').style.display = 'none';
+
     // Initialize with raw view visible
     input.classList.remove('hidden');
     output.classList.add('hidden');
@@ -27,32 +31,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     async function formatJson() {
+        const loader = document.querySelector('.loader');
         try {
-            originalJson = input.value;
-            const jsonObj = JSON.parse(originalJson);
-            formattedJson = JSON.stringify(jsonObj, null, 2);
-            output.innerHTML = formatJsonToHtml(jsonObj, 0, '');
-
-            // Show formatted output and hide input
-            output.classList.remove('hidden');
-            input.classList.add('hidden');
-
-            // Hide any previous errors
-            errorMessage.classList.add('hidden');
-            errorLineDisplay.classList.add('hidden');
-            errorContext.classList.add('hidden');
-
-            setupCollapsibleListeners();
+            // Show loader
+            loader.style.display = 'block';
+            
+            // Wrap the JSON processing in a Promise
+            await new Promise((resolve, reject) => {
+                // Use setTimeout to allow the UI to update with the loader
+                setTimeout(async () => {
+                    try {
+                        originalJson = input.value;
+                        const jsonObj = JSON.parse(originalJson);
+                        formattedJson = JSON.stringify(jsonObj, null, 2);
+                        output.innerHTML = formatJsonToHtml(jsonObj, 0, '');
+    
+                        // Show formatted output and hide input
+                        output.classList.remove('hidden');
+                        input.classList.add('hidden');
+    
+                        // Hide any previous errors
+                        errorMessage.classList.add('hidden');
+                        errorLineDisplay.classList.add('hidden');
+                        errorContext.classList.add('hidden');
+    
+                        setupCollapsibleListeners();
+                        resolve();
+                    } catch (e) {
+                        formattedJson = '';
+                        showError(e);
+                        input.classList.remove('hidden');
+                        output.classList.add('hidden');
+                        reject(e);
+                    }
+                }, 0);
+            });
         } catch (e) {
-            // Show error but keep the raw input visible
-            formattedJson = '';
-          // await  showPreciseJsonError(originalJson, e)
-          showError(e)
-            input.classList.remove('hidden');
-            output.classList.add('hidden');
+            // Error is already handled in the inner catch
+        } finally {
+            // Hide loader in all cases
+            loader.style.display = 'none';
         }
     }
-
+    
     function showError(error) {
         try {
             // Extract position from error message
@@ -847,4 +868,3 @@ function clearAll() {
 
 
 });
-
