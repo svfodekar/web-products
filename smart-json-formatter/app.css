@@ -50,7 +50,6 @@ button {
 textarea, #output {
     width: 100%;
     flex: 1;
-    padding: 10px 0px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-family: Consolas, monospace;
@@ -1142,7 +1141,6 @@ button:hover {
 textarea, #output {
     width: 100%;
     flex: 1;
-    padding: 8px;
     font-size: 0.9em;
     border: 1px solid #ddd;
     border-radius: 3px;
