@@ -2,96 +2,85 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Github Postman Sync Engine</title>
-    <link rel="stylesheet" href="app.css">
-    <link rel="icon" type="image/png" href="logo.jpg"> <!-- Favicon link -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirect to local Server</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="logo23.png">
 </head>
 
 <body>
+  <div class="popup-box">
+    <div class="header-box">
+      <div class="sub-header-box">
+        <div class="logo-box">
+          <div>
+            <img src="logo23.png" alt="Logo" class="header-logo">
+          </div>
+          <div class="logo-header-title">Redirect to local Server</div>
+        </div>
+        <div class="switch-action-container">
+          <div>
+            <label class="switch">
+              <input type="checkbox" id="main-toggle"  class="enable-toggle">
+              <span class="slider round">
+                <span class="switch-text">OFF</span>
+              </span>
+            </label>
+          </div>
 
-    <div class="main">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo-title">
-                <img src="logo.jpg" alt="Logo">
-                <h2>Github Postman Sync Engine</h2>
-            </div>
-            <a href="https://github.com/CodeUtilityBox/github-postman-sync/issues/new" target="_blank"
-                id="feedbackButton">feedback</a>
+          <div class="header-actions">
+            <a href="https://github.com/svfodekar/api-redirector-feedback/blob/main/How%20To%20Use.md" target="_blank" class="action-button" title="How to Use">
+              Ways to Use
+            </a>
+            <a href="https://github.com/svfodekar/api-redirector-feedback/issues/new" target="_blank" class="action-button" title="Suggestions">
+              Suggestions
+            </a>
+          </div>
         </div>
 
-        <!-- Work Section -->
-        <div class="work-section">
-            <div class="work-sec-header">
-                <button onclick="showSection('terminal')">Terminal</button>
-                <button onclick="showSection('config')">Configure</button>
-
-                <div class="repo-inputes">
-                    <label for="repo">Repository:</label>
-                    <div class="repo-container">
-                        <input type="text" id="repoInput" placeholder="Enter repository name...">
-                        <select id="repoSelect" size="5"></select>
-                    </div>
-                </div>
-                <div class="repo-inputes" >
-                    <label for="branch">Base Branch:</label>
-                    <div class="branch-container">
-                        <input type="text" id="branchInput" placeholder="Enter branch name...">
-                        <div class="dropdown">
-                            <select id="branchSelect" size="5"></select>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-
-            <!-- Terminal Section -->
-            <div id="terminal" class="terminal active">
-                <div class="cmd-section">
-                    <input type="text" id="commandInput" placeholder="Enter command here...">
-                    <button id="clearButton">Clear</button>
-                </div>
-                <div class="logs"></div class="-link">
-            </div>
-
-            <!-- Config Section -->
-            <div id="config" class="config">
-                <p class="config-message">Don't worry, everything is happening on your local machine! Your data is safe
-                    🔐🌴</p>
-                <label for="github_username">GitHub Username</label>
-
-                <input type="text" id="github_username" placeholder="">
-
-                <div class="github-token-link">
-                    <label for="github_token">GitHub Token</label>
-                    <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">get token</a>
-                    <span class="tip">Tip: Use only repository-based access tokens for better security and access
-                        control</span>
-                </div>
-                <input type="text" id="github_token" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
-
-
-                <div>
-                    <div class="github-token-link">
-                        <label for="postman_api_key">Postman API Key</label>
-                        <a href="https://web.postman.co/settings/me/api-keys" target="_blank">get API key</a>
-
-                    </div>
-                    <input type="text" id="postman_api_key" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
-
-                </div>
-
-
-
-                <button id="saveConfig">Save</button>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <script src="app.js"></script>
+    <div class="child-container-content">
+      <div class="redirect-wrapper" id="redirectWrapper">
+        <div class="redirect-container">
+          <label for="fromUrl" class="small-label">From URL</label>
+          <input type="text" id="fromUrl" class="small-input" placeholder="https://your-server-url.com/something">
+
+          <label for="toUrl" class="small-label">To URL</label>
+          <input type="text" id="toUrl" class="small-input" placeholder="https://localhost:port/something">
+
+          <div class="method-save-container">
+            <select id="methodSelect" class="small-input">
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+            <button id="addRedirect">ADD REDIRECT</button>
+          </div>
+        </div>
+      </div>
+      <div id="loading" style="display: none;">
+        <div class="spinner"></div>
+      </div>
+      <div class="redirects-list-container">
+        <div class="redirects-list-header">
+          <input type="text" id="searchInput"  placeholder="Search APIs..." class="search-input">
+          <button id="disableAllBtn">Re-Sync APIs</button>
+          <button id="toggleButton" title="Add new API">+</button>
+        </div>
+        <div class="underline"></div> <!-- Added underline div -->
+        <ul id="redirectList"></ul>
+      </div>
+    </div>
+
+  </div>
+  <script src="popup.js"></script>
+  </div>
+  <div id="toast-container"></div>
 </body>
 
 </html>
