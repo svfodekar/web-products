@@ -16,8 +16,9 @@ const searchInput = document.getElementById('searchInput');
 const urlParams = new URLSearchParams(window.location.search);
 const extensionId = urlParams.get('extension_id'); // Get the extensionId from the URL parameter
 const downloadLink = "https://chromewebstore.google.com/detail/redirect-to-local-server/mcckhgbpcjcfdmnmbahhoakjlnmmjjgo"; // 
-const extensionMessage = `Extension ID is missing from the URL. Please close and reopen the extension to resolve this issue.\n\nIf you have not downloaded the extension yet, download "Redirect to Local server" Chrome Extension.`;
-const TipHtmlString = `<p>🔄 After adding a new <strong>DOMAIN</strong> or after a <strong>LONG BREAK</strong>, turn <strong>OFF</strong> the extension & <strong>REFRESH</strong> your web app to sync with the extension.</p>`;
+const extensionMessage = `Extension ID is missing from the URL. Please close and reopen the extension to resolve this issue.\n\nIf you have not downloaded it yet, download Chrome Extension "Redirect to Local Server".`;
+const TipHtmlString = `<p>🛠️ 🔄 After adding a new <strong>DOMAIN</strong> or <strong>LONG BREAK</strong>, turn <strong>OFF</strong> the extension & <strong>REFRESH</strong> your Web App to sync with the extension 😊</p>`;
+const UpdateMessageString = `<p>🛠️ <strong>Update available !</strong> Fixed bugs and improved UI for better performance <a href="https://chromewebstore.google.com/detail/redirect-to-local-server/mcckhgbpcjcfdmnmbahhoakjlnmmjjgo" target="_blank">click to update</a> 😊</p>`;
 
 !extensionId && alert(extensionMessage);
 
@@ -190,6 +191,7 @@ async function refreshPage(source) {
     const redirects = response?.redirects || [];
     await renderRedirectList(redirects);
     setEqualWidth()
+    setHrWidths();
     updateMainToggle(response?.onOff?.[0]);
     //reset local values
     if (source != 'search') {
@@ -233,10 +235,17 @@ addRedirectButton.addEventListener('click', async () => {
 
 //main toggle actions test
 document.getElementById('main-toggle').addEventListener('change', (event) => {
+  if (!extensionId) {
+    !extensionId && alert(extensionMessage);
+    createPopup(TipHtmlString, 15000);
+    event.target.checked = false;
+    return;
+  }
   const isChecked = event.target.checked;
   const status = isChecked ? 'ON' : 'OFF';
   chrome.runtime.sendMessage(extensionId, { action: 'EnableDisableExtension', status }, (res) => {
     refreshPage('search');
+    createPopup(UpdateMessageString, 15000);
   });
 });
 
@@ -379,6 +388,17 @@ function setEqualWidth() {
       item.style.width = `${maxWidth}px`;
   });
 }
+
+function setHrWidths() {
+  const w = Math.max(1, 
+    document.getElementById('redirectList')?.clientWidth || 0,
+    ...Array.from(document.querySelectorAll('.small-input')).map(e => e.offsetWidth)
+  );
+  document.querySelectorAll('hr').forEach(e => e.style.width = w + 'px');
+}
+
+
+
 
 
 
