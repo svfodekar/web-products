@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Github Postman Sync Engine</title>
     <link rel="stylesheet" href="app.css">
-    <link rel="icon" type="image/png" href="logo.jpg">  <!-- Favicon link -->
+    <link rel="icon" type="image/png" href="logo.jpg"> <!-- Favicon link -->
 </head>
+
 <body>
 
     <div class="main">
@@ -16,52 +18,74 @@
                 <img src="logo.jpg" alt="Logo">
                 <h2>Github Postman Sync Engine</h2>
             </div>
-            <a href="https://github.com/CodeUtilityBox/github-postman-sync/issues/new" target="_blank" id="feedbackButton">feedback</a>
+            <a href="https://github.com/CodeUtilityBox/github-postman-sync/issues/new" target="_blank"
+                id="feedbackButton">feedback</a>
         </div>
-        
+
         <!-- Work Section -->
         <div class="work-section">
             <div class="work-sec-header">
                 <button onclick="showSection('terminal')">Terminal</button>
                 <button onclick="showSection('config')">Configure</button>
-                
-                <label for="repo">Repository:</label>
-                <div class="repo-container">
-                    <input type="text" id="repoInput" placeholder="Enter repository name...">
-                    <select id="repoSelect" size="5"></select>
-                </div>                
 
-                <label for="branch">Base Branch:</label>
-                <div class="branch-container">
-                    <input type="text" id="branchInput" placeholder="Enter branch name...">
-                    <div class="dropdown">
-                        <select id="branchSelect" size="5"></select>
+                <div class="repo-inputes">
+                    <label for="repo">Repository:</label>
+                    <div class="repo-container">
+                        <input type="text" id="repoInput" placeholder="Enter repository name...">
+                        <select id="repoSelect" size="5"></select>
                     </div>
                 </div>
-                
+                <div class="repo-inputes" >
+                    <label for="branch">Base Branch:</label>
+                    <div class="branch-container">
+                        <input type="text" id="branchInput" placeholder="Enter branch name...">
+                        <div class="dropdown">
+                            <select id="branchSelect" size="5"></select>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
-            
+
             <!-- Terminal Section -->
             <div id="terminal" class="terminal active">
                 <div class="cmd-section">
                     <input type="text" id="commandInput" placeholder="Enter command here...">
                     <button id="clearButton">Clear</button>
                 </div>
-                <div class="logs"></div>
+                <div class="logs"></div class="-link">
             </div>
-            
+
             <!-- Config Section -->
             <div id="config" class="config">
-                <p class="config-message">Don't worry, everything is happening on your local machine! Your data is safe 🔐🌴</p>
+                <p class="config-message">Don't worry, everything is happening on your local machine! Your data is safe
+                    🔐🌴</p>
                 <label for="github_username">GitHub Username</label>
+
                 <input type="text" id="github_username" placeholder="">
-            
-                <label for="github_token">GitHub Token</label>
+
+                <div class="github-token-link">
+                    <label for="github_token">GitHub Token</label>
+                    <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">get token</a>
+                    <span class="tip">Tip: Use only repository-based access tokens for better security and access
+                        control</span>
+                </div>
                 <input type="text" id="github_token" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
-            
-                <label for="postman_api_key">Postman API Key</label>
-                <input type="text" id="postman_api_key" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
-            
+
+
+                <div>
+                    <div class="github-token-link">
+                        <label for="postman_api_key">Postman API Key</label>
+                        <a href="https://web.postman.co/settings/me/api-keys" target="_blank">get API key</a>
+
+                    </div>
+                    <input type="text" id="postman_api_key" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+
+                </div>
+
+
+
                 <button id="saveConfig">Save</button>
             </div>
         </div>
@@ -69,4 +93,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
