@@ -13,7 +13,7 @@ html, body {
 }
  
 .child-container-content {
-    width: 750px;
+    width: 58%;
     margin: auto;
 }
  
@@ -57,7 +57,7 @@ html, body {
 .header-box .switch {
     margin-left: 0px; /* Adjusts margin to the right */
     position: relative;   
-    left: -6%;
+    left: -30%;
     color: #020202;
     margin-bottom: -7px;
 }
@@ -186,7 +186,6 @@ h4 {
     padding-top: 10px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Deeper shadow for more depth */
     backdrop-filter: blur(15px); /* Stronger blur for a frosted glass effect */
-    width: 750px; /* Maximum width for the container */
     margin-top: 2px;
     align-items: center; /* Align items vertically in the center */
     box-sizing: border-box;
@@ -251,7 +250,6 @@ li {
 hr {
     border: 0.5px solid #ccc; /* Style for the separator line */
     margin: 5px 0; /* Margin above and below the line */
-    width: calc(102% + 35px); /* Combine 102% and 10px */
     min-width: 145%; /* Ensure a minimum width of 105% */
     position: relative; /* Enable positioning */
     z-index: 1; /* Ensure the <hr> appears on top of other elements */
@@ -551,7 +549,7 @@ input:checked + .slider .switch-text {
   }
  
   .sub-header-box {
-    width:750px;
+    width:60%;
     display: flex;
     justify-content: space-between;
     align-items: center;
