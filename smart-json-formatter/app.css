@@ -50,6 +50,7 @@ button {
 textarea, #output {
     width: 100%;
     flex: 1;
+    padding: 10px 0px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-family: Consolas, monospace;
@@ -208,7 +209,7 @@ textarea, #output {
     border: 1px solid #ddd;
     border-radius: 4px;
     max-height: 200px;
-    overflow-y: auto;
+    /* overflow-y: auto; /* Vertical scroll */
     /* overflow-x: auto; Horizontal scroll */ 
     z-index: 10;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -1141,6 +1142,7 @@ button:hover {
 textarea, #output {
     width: 100%;
     flex: 1;
+    padding: 8px;
     font-size: 0.9em;
     border: 1px solid #ddd;
     border-radius: 3px;
@@ -1269,3 +1271,19 @@ button {
 .collapsible {
     border-radius: 3px; /* Minimal rounding */
 }
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+    display: none; /* Hidden by default */
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
