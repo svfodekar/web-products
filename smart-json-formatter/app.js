@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // document.querySelector('.loader').style.display = 'block';
-    document.querySelector('.loader').style.display = 'none';
+    // document.querySelector('.loader').style.display = 'none';
 
     // Initialize with raw view visible
     input.classList.remove('hidden');
@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     async function formatJson() {
-        const loader = document.querySelector('.loader');
+       // const loader = document.querySelector('.loader');
         try {
             // Show loader
-            loader.style.display = 'block';
+         //   loader.style.display = 'block';
             
             // Wrap the JSON processing in a Promise
             await new Promise((resolve, reject) => {
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Error is already handled in the inner catch
         } finally {
             // Hide loader in all cases
-            loader.style.display = 'none';
+            //loader.style.display = 'none';
         }
     }
     
