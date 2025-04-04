@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
        // const loader = document.querySelector('.loader');
         try {
             // Show loader
-         //   loader.style.display = 'block';
+          //  loader.style.display = 'block';
             
             // Wrap the JSON processing in a Promise
             await new Promise((resolve, reject) => {
@@ -70,10 +70,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Error is already handled in the inner catch
         } finally {
             // Hide loader in all cases
-            //loader.style.display = 'none';
+           // loader.style.display = 'none';
         }
     }
-    
+
     function showError(error) {
         try {
             // Extract position from error message
@@ -495,14 +495,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // Helper function to get value by path
             function getValueByPath(obj, path) {
-                const parts = path.split(/[\.\[\]]/).filter(Boolean);
+                const parts = path.split(/[\.\[\]]/).filter(Boolean); // Split on . [ ] and remove empty parts
                 let current = obj;
+                
                 for (const part of parts) {
-                    if (current === undefined) break;
-                    current = current[part];
+                    if (current === undefined || current === null) return undefined;
+                    const realPath = isNaN(part) ? part : +part;
+                    // Convert array index strings to numbers when needed
+                    current = current[realPath];
                 }
+                
                 return current;
             }
 
@@ -655,8 +658,8 @@ function findAllKeys(obj, currentPath = '', searchTerm = '') {
             }
         } else {
             // Search in values
-            const value = obj[key];
-            if (typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase())) {
+            const value = `${obj[key]}`;
+            if (typeof value == 'string' && value.toLowerCase().includes(searchTerm.toLowerCase())) {
                 // For values, we'll highlight the value element which has .value in its path
                 currentKeyHighlights.push(`${newPath}.value`);
             }
