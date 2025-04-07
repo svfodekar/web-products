@@ -245,7 +245,7 @@ document.getElementById('main-toggle').addEventListener('change', (event) => {
   const status = isChecked ? 'ON' : 'OFF';
   chrome.runtime.sendMessage(extensionId, { action: 'EnableDisableExtension', status }, (res) => {
     refreshPage('search');
-    createPopup(UpdateMessageString, 15000);
+    //createPopup(UpdateMessageString, 15000);
   });
 });
 
