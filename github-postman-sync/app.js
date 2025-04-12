@@ -56,12 +56,12 @@ async function handleGitPullHard(branchName) {
 
 async function handleGitPush(commandParams) {
     const split = commandParams.split(' ');
-    const destinationBranch = split?.[0];
-    const newBranch = split?.[1];
-    let commitMsg = split.slice(2).join(' ').trim();
+    const destinationBranch = localStorage.getItem("BASE_BRANCH") || 'main';
+    const newBranch = split?.[0];
+    let commitMsg = split.slice(1).join(' ').trim();
 
     if (!destinationBranch || !newBranch || !commitMsg) {
-        displayOutput('Invalid command! Correct usage: git push base-branch new-branch message');
+        displayOutput('Invalid command! Correct usage: git push new-branch message');
         return;
     }
     displayOutput(`Processing....`);
