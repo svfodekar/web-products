@@ -487,7 +487,7 @@ input, select {
 
 /* Enhanced Progress Bar Styles */
 .progress-container {
-    width: 98%;
+    width: 100%;
     background-color: #333;
     border-radius: 4px;
     margin: 10px auto;
