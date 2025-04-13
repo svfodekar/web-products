@@ -1,26 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 let extensionId = urlParams.get("extensionId");
 
-console.log("Extracted Extension ID:", extensionId);
-
-if (!extensionId) {
-    console.log("Extension ID not found in URL.");
-    //alert("✅ Enhance your experience by installing the 'GitHub Postman Sync Engine' Chrome Extension");
-}
-
-// document.getElementById("login-btn").addEventListener("click", () => {
-//     doPostmanOauthLogin();
-// });
-
-// function doPostmanOauthLogin() {
-//     chrome.runtime.sendMessage(extensionId, { action: 'doPostmanOauthLogin' }, (res) => {
-//         console.log(res)
-//     });
-// }
-
-//-----------------------
-
-// Object to store user credentials
 const userCredentials = {};
 const postmanApiUrl = 'https://api.getpostman.com';
 
@@ -34,24 +14,112 @@ const HELP_MESSAGE = `<p><strong>Available Commands:</strong><br>
 - git push new-branch message: Push collections and create pull request to GitHub.<br>
 - help: Show this help message.</p>`;
 
+// Enhanced progress bar functions
+function showProgressBar() {
+    const progressContainer = document.getElementById('progress-container');
+    progressContainer.style.display = 'block';
+    updateProgressBar(0, '🚀 Initializing operation...');
+}
+
+function hideProgressBar() {
+    const progressContainer = document.getElementById('progress-container');
+    progressContainer.style.display = 'none';
+}
+
+function updateProgressBar(percent, message = '') {
+    const progressBar = document.getElementById('progress-bar');
+    percent = Math.min(100, Math.max(0, percent));
+    progressBar.style.width = `${percent}%`;
+    progressBar.textContent = message || `${percent}%`;
+    
+    // Dynamic color changes
+    if (percent < 30) {
+        progressBar.style.background = 'linear-gradient(90deg, #FF5722, #FF9800)';
+    } else if (percent < 70) {
+        progressBar.style.background = 'linear-gradient(90deg, #FF9800, #FFEB3B)';
+    } else {
+        progressBar.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
+    }
+    
+    // Add detailed log message if provided
+    if (message) {
+        displayOutput(`[Progress] ${message}`, '#aaa');
+    }
+}
+
 async function handleGitPull(branchName) {
     if (!branchName || branchName.split(' ').length > 1) {
-        displayOutput('Invalid command! Correct usage - git pull branch-name', 'red');
+        displayOutput('❌ Invalid command! Correct usage - git pull branch-name', 'red');
         return;
     }
-    displayOutput(`Processing....`);
+    
+    showProgressBar();
+    try {
+        updateProgressBar(10, '🔍 Validating branch...');
+        displayOutput(`Starting pull operation from branch: ${branchName}`, '#aaa');
+        
+        updateProgressBar(20, '📦 Fetching collections from GitHub...');
+        const collections = await fetchAllCollectionsFromGitHub(userCredentials, branchName);
+        displayOutput(`Found ${collections.length} collections on GitHub`, '#aaa');
+        
+        updateProgressBar(40, '🌐 Fetching environments from GitHub...');
+        const environments = await fetchEnvironmentsFromGitHub(userCredentials, branchName);
+        displayOutput(`Found ${environments.length} environments on GitHub`, '#aaa');
+        
+        updateProgressBar(60, '🔄 Processing data...');
     await pullFromGithub(userCredentials, branchName);
-    displayOutput(`Successfully pulled all collections from the branch: ${branchName}\n`, 'green');
+    updateProgressBar(100, '🎉 Pull completed successfully!');
+    displayOutput(`\n✅ Successfully pulled ${collections.length} collections and ${environments.length} environments from branch: ${branchName}\n`, 'green');
+    
+    setTimeout(hideProgressBar, 1000);
+} catch (e) {
+    updateProgressBar(0, '❌ Operation failed');
+    displayOutput(`\n🔥 Error during pull operation: ${e.message}\n`, 'red');
+    setTimeout(hideProgressBar, 1500);
+}
 }
 
 async function handleGitPullHard(branchName) {
     if (!branchName || branchName.split(' ').length > 1) {
-        displayOutput(`Invalid command! Correct usage: git pull hard branch-name`, 'red');
+        displayOutput('❌ Invalid command! Correct usage: git pull hard branch-name', 'red');
         return;
     }
-    displayOutput(`Processing....`);
-    await hardPullPostmanCollections(userCredentials, branchName)
-    displayOutput(`Successfully hard pulled all collections from the branch: ${branchName}\n`, 'green');
+    
+    showProgressBar();
+    try {
+        updateProgressBar(5, '⚠️ Starting HARD pull operation...');
+        displayOutput(`\nInitiating HARD pull from branch: ${branchName}\nThis will DELETE all existing Postman collections first!`, '#aaa');
+        
+        updateProgressBar(10, '🗑️ Deleting existing collections...');
+        const deleteCount = await deleteAllPostmanCollections(userCredentials.POSTMAN_API_KEY);
+        displayOutput(`Deleted ${deleteCount} existing collections`, '#aaa');
+        
+        updateProgressBar(30, '📥 Fetching collections from GitHub...');
+        const collections = await fetchAllCollectionsFromGitHub(userCredentials, branchName);
+        displayOutput(`Found ${collections.length} collections on GitHub`, '#aaa');
+        
+        updateProgressBar(50, '⏳ Importing collections to Postman...');
+        let importedCount = 0;
+        for (const collection of collections) {
+            await createPostmanCollection(userCredentials.POSTMAN_API_KEY, collection);
+            importedCount++;
+            updateProgressBar(50 + (importedCount/collections.length)*40, 
+                `📦 Importing collection ${importedCount}/${collections.length}: ${collection.info.name}`);
+        }
+        
+        updateProgressBar(95, '🌐 Fetching environments...');
+        const environments = await fetchEnvironmentsFromGitHub(userCredentials, branchName);
+        displayOutput(`Found ${environments.length} environments on GitHub`, '#aaa');
+        
+        updateProgressBar(100, '🎉 HARD pull completed!');
+        displayOutput(`\n✅ Successfully imported ${importedCount} collections and ${environments.length} environments from branch: ${branchName}\n`, 'green');
+        
+        setTimeout(hideProgressBar, 1000);
+    } catch (e) {
+        updateProgressBar(0, '❌ HARD pull failed');
+        displayOutput(`\n🔥 Error during HARD pull: ${e.message}\n`, 'red');
+        setTimeout(hideProgressBar, 1500);
+    }
 }
 
 async function handleGitPush(commandParams) {
@@ -60,13 +128,80 @@ async function handleGitPush(commandParams) {
     const newBranch = split?.[0];
     let commitMsg = split.slice(1).join(' ').trim();
 
-    if (!destinationBranch || !newBranch || !commitMsg) {
-        displayOutput('Invalid command! Correct usage: git push new-branch message');
+    if (!newBranch || !commitMsg) {
+        displayOutput('❌ Invalid command! Correct usage: git push new-branch "commit message"', 'red');
+        return;
+    }newBranch
+    if (destinationBranch.toLowerCase() == newBranch.toLowerCase()) {
+        displayOutput('❌ Base branch and destination branch can\'t be same ', 'red');
         return;
     }
-    displayOutput(`Processing....`);
-    commitMsg = commitMsg.slice(1, commitMsg.length - 1);
-    await pushOnGithub(userCredentials, newBranch, destinationBranch, commitMsg);
+    
+    showProgressBar();
+    try {
+        commitMsg = commitMsg.slice(1, commitMsg.length - 1);
+        displayOutput(`\nStarting push operation to new branch: ${newBranch}`, '#aaa');
+        
+        updateProgressBar(10, '🔍 Validating base branch...');
+        await ensureBaseBranchExists(userCredentials, destinationBranch);
+        displayOutput(`Using base branch: ${destinationBranch}`, '#aaa');
+        
+        updateProgressBar(20, '🌱 Checking branch...');
+        await createBranch(userCredentials, destinationBranch, newBranch);
+        
+        updateProgressBar(30, '📦 Comparing changes...');
+
+        //const collections = await getCollections(userCredentials.POSTMAN_API_KEY);
+
+        const changes = await getChangedCollections(userCredentials, userCredentials.BASE_BRANCH)
+        // const collections = await fetchAllCollectionsFromGitHub(userCredentials, branchName);
+        // displayOutput(`Found ${collections.length} collections in Postman`, '#aaa');
+        const hasChanges = Object.values(changes).some(array => array.length > 0);
+        if(!hasChanges){
+            displayOutput(`❌ No Changes found !`, '#aaa');
+            return;
+        }
+
+        const collections = [...changes.updatedCollections, ...changes.newCollections];
+        if(collections.length > 0){
+            updateProgressBar(40, '💾 Commiting collections to GitHub...');
+            displayOutput(`Commiting collections to GitHub...`, '#aaa');
+            for (let i = 0; i < collections.length; i++) {
+                //await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+                const collection = collections[i];
+                const filePath = `Collections/${encodeURIComponent(collection.info.name)}.json`;
+                await saveToGitHub(collections, userCredentials, filePath, newBranch, `Sync collection: ${collection.info.name}`);
+            }
+            updateProgressBar(40, '💾 Committed collections to GitHub');
+            displayOutput(` Committed collections to GitHub`, '#aaa');
+        }
+       //await saveToGitHubBatch(collections, userCredentials, newBranch, `Sync collections: ${commitMsg}`);
+        
+        //updateProgressBar(75, '🌐 Fetching environments from Postman...');
+        // const environments = await getEnvironments(userCredentials.POSTMAN_API_KEY);
+        const environments = [...changes.newEnvironments, ...changes.updatedEnvironments ]
+        //displayOutput(`Found ${environments.length} environments in Postman`, '#aaa');
+        
+        if(environments.length > 0){
+            updateProgressBar(80, '💾 commiting environments to GitHub...');
+            const envFilePath = `Environments/environments.json`;
+            await saveToGitHub(environments, userCredentials, envFilePath, newBranch, "Sync all environments");
+            displayOutput(`committed environments to GitHub`, '#aaa');
+        }
+        
+        updateProgressBar(90, '📮 Creating pull request...');
+        const prUrl = await createPullRequest(userCredentials, newBranch, destinationBranch, commitMsg);
+        
+        updateProgressBar(100, '🎉 Push completed successfully!');
+        displayOutput(`\n✅ Successfully pushed ${collections.length} collections and ${environments.length} environments to branch: ${newBranch}\n`, 'green');
+        displayOutput(`🔗 Pull request: <a href="${prUrl}" target="_blank" style="color: green; text-decoration: none;">${prUrl}</a>`, 'green');
+        
+        setTimeout(hideProgressBar, 1000);
+    } catch (e) {
+        updateProgressBar(0, '❌ Push failed');
+        displayOutput(`\n🔥 Error during push operation: ${e.message}\n`, 'red');
+        setTimeout(hideProgressBar, 1500);
+    }
 }
 
 async function processCommand(command) {
@@ -121,8 +256,11 @@ function initializeTerminal() {
 // Helper function to handle fetch responses
 async function handleResponse(response) {
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        let errorData = response;
+        try {
+            errorData = await response.json();
+        } catch (e) { }
+        throw new Error(errorData.message || `HTTP error! status: ${response.status} - ${JSON.stringify(errorData)}`);
     }
     return response.json();
 }
@@ -171,6 +309,173 @@ async function getEnvironments(apiKey) {
     return environments;
 }
 
+// Modified saveToGitHubBatch function
+async function saveToGitHubBatch(collections, config, branch, commitMsg) {
+    const repoName = config.GITHUB_REPO.split('/').pop().replace('.git', '');
+    const repoOwner = config.GITHUB_USERNAME;
+    const headers = {
+        'Authorization': `token ${config.GITHUB_TOKEN}`,
+        'Content-Type': 'application/json',
+    };
+
+    function utf8ToBase64(str) {
+        return window.btoa(unescape(encodeURIComponent(str)));
+    }
+
+    try {
+        // Prepare all files in a single batch
+        const files = {};
+        
+        // First check which files already exist to get their SHAs
+        updateProgressBar(45, '🔍 Checking existing files on GitHub...');
+        const existingFiles = await checkExistingFiles(collections, config, branch);
+        
+        // Prepare the batch request
+        updateProgressBar(50, '📦 Preparing batch commit...');
+        for (const collection of collections) {
+            const filePath = `Collections/${collection.info.name}.json`;
+            files[filePath] = {
+                content: utf8ToBase64(JSON.stringify(collection, null, 2)),
+                sha: existingFiles[filePath]?.sha || null
+            };
+        }
+
+        // Create the commit with all files
+        updateProgressBar(60, '🚀 Commmiting collections...');
+        const commitResponse = await fetch(
+            `https://api.github.com/repos/${repoOwner}/${repoName}/git/commits`,
+            {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    message: commitMsg,
+                    tree: await createTree(files, repoOwner, repoName, branch, headers),
+                    parents: [await getLatestCommitSha(repoOwner, repoName, branch, headers)]
+                })
+            }
+        );
+        
+        const commitData = await handleResponse(commitResponse);
+        
+        // Update the branch reference
+        updateProgressBar(80, '🔗 Updating branch reference...');
+        await fetch(
+            `https://api.github.com/repos/${repoOwner}/${repoName}/git/refs/heads/${branch}`,
+            {
+                method: 'PATCH',
+                headers: headers,
+                body: JSON.stringify({
+                    sha: commitData.sha,
+                    force: false
+                })
+            }
+        );
+        
+        updateProgressBar(90, '✅ Finalizing commit...');
+        displayOutput(`Committed ${collections.length} collections in batch`, '#aaa');
+        return true;
+    } catch (error) {
+        displayOutput(`Error during batch commit: ${error.message}`, 'red');
+        throw error;
+    }
+}
+
+// Helper functions for batch upload
+async function checkExistingFiles(collections, config, branch) {
+    const repoName = config.GITHUB_REPO.split('/').pop().replace('.git', '');
+    const repoOwner = config.GITHUB_USERNAME;
+    const headers = {
+        'Authorization': `token ${config.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+    };
+    
+    const existingFiles = {};
+    const paths = collections.map(c => `Collections/${c.info.name}.json`);
+    
+    // GitHub API only allows checking one file at a time
+    for (const path of paths) {
+        try {
+            const response = await fetch(
+                `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`,
+                { headers }
+            );
+            if (response.ok) {
+                const data = await response.json();
+                existingFiles[path] = { sha: data.sha };
+            }
+        } catch (error) {
+            // File doesn't exist or other error - we'll treat as new file
+            continue;
+        }
+    }
+    
+    return existingFiles;
+}
+
+async function createTree(files, repoOwner, repoName, branch, headers) {
+    const tree = [];
+    
+    for (const [path, file] of Object.entries(files)) {
+        tree.push({
+            path: path,
+            mode: '100644', // File mode (100644 is file)
+            type: 'blob',
+            sha: await createBlob(file.content, repoOwner, repoName, headers),
+            ...(file.sha ? { sha: file.sha } : {})
+        });
+    }
+    
+    const response = await fetch(
+        `https://api.github.com/repos/${repoOwner}/${repoName}/git/trees`,
+        {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                base_tree: await getBaseTreeSha(repoOwner, repoName, branch, headers),
+                tree: tree
+            })
+        }
+    );
+    
+    const data = await handleResponse(response);
+    return data.sha;
+}
+
+async function createBlob(content, repoOwner, repoName, headers) {
+    const response = await fetch(
+        `https://api.github.com/repos/${repoOwner}/${repoName}/git/blobs`,
+        {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                content: content,
+                encoding: 'base64'
+            })
+        }
+    );
+    
+    const data = await handleResponse(response);
+    return data.sha;
+}
+
+async function getBaseTreeSha(repoOwner, repoName, branch, headers) {
+    const response = await fetch(
+        `https://api.github.com/repos/${repoOwner}/${repoName}/branches/${branch}`,
+        { headers }
+    );
+    const data = await handleResponse(response);
+    return data.commit.commit.tree.sha;
+}
+
+async function getLatestCommitSha(repoOwner, repoName, branch, headers) {
+    const response = await fetch(
+        `https://api.github.com/repos/${repoOwner}/${repoName}/branches/${branch}`,
+        { headers }
+    );
+    const data = await handleResponse(response);
+    return data.commit.sha;
+}
+
 // Save content to GitHub
 async function saveToGitHub(content, config, filePath, branch, message) {
     const repoName = config.GITHUB_REPO.split('/').pop().replace('.git', '');
@@ -179,6 +484,10 @@ async function saveToGitHub(content, config, filePath, branch, message) {
         'Authorization': `token ${config.GITHUB_TOKEN}`,
         'Content-Type': 'application/json',
     };
+
+    function utf8ToBase64(str) {
+        return window.btoa(unescape(encodeURIComponent(str)));
+    }
 
     try {
         // Check if the file exists
@@ -200,7 +509,7 @@ async function saveToGitHub(content, config, filePath, branch, message) {
                 headers: headers,
                 body: JSON.stringify({
                     message,
-                    content: btoa(JSON.stringify(content, null, 2)),
+                    content: utf8ToBase64(JSON.stringify(content, null, 2)),
                     sha,
                     branch,
                 }),
@@ -209,7 +518,7 @@ async function saveToGitHub(content, config, filePath, branch, message) {
         await handleResponse(response);
         console.log(`File '${filePath}' saved successfully on branch '${branch}'.`);
     } catch (error) {
-        displayOutput(`Error saving file '${filePath}' to GitHub:`+ error.message, 'red');
+        displayOutput(`Error saving file '${filePath}' to GitHub: ${error.message}`, 'red');
         throw error;
     }
 }
@@ -272,8 +581,12 @@ async function createInitialCommit(config, baseBranch) {
         'Content-Type': 'application/json',
     };
 
+    function utf8ToBase64(str) {
+        return window.btoa(unescape(encodeURIComponent(str)));
+    }
+
     const commitMessage = "Initial commit";
-    const content = btoa("# Initial Commit\nThis repository is initialized.");
+    const content = utf8ToBase64("# Initial Commit\nThis repository is initialized.");
     const filePath = "README.md";
 
     try {
@@ -284,7 +597,7 @@ async function createInitialCommit(config, baseBranch) {
                 headers: headers,
                 body: JSON.stringify({
                     message: commitMessage,
-                    content,
+                    content: content,
                     branch: baseBranch,
                 }),
             }
@@ -292,7 +605,7 @@ async function createInitialCommit(config, baseBranch) {
         await handleResponse(response);
         console.log(`Base branch '${baseBranch}' created successfully with an initial commit.`);
     } catch (error) {
-        displayOutput(`Error creating initial commit:`+ error.message, 'red');
+        displayOutput(`Error creating initial commit: ${error.message}`, 'red');
         throw error;
     }
 }
@@ -326,12 +639,15 @@ async function createBranch(config, baseBranch, newBranch) {
             }
         );
         await handleResponse(response);
-        displayOutput(`Branch '${newBranch}' created successfully.`);
+        displayOutput(`Created new branch: ${newBranch}`, '#aaa');
     } catch (error) {
-        displayOutput(`Error creating branch '${newBranch}':`, error.message);
-        if (error.message.includes('Reference already exists')) return;
+        if (error.message.includes('Reference already exists')){
+            displayOutput(`branch '${newBranch}' already exists`, '#aaa');
+            return;
+        } 
         throw error;
     }
+    updateProgressBar(30, 'branch created.');
 }
 
 // Create a pull request
@@ -344,9 +660,14 @@ async function createPullRequest(config, branchName, baseBranch = 'main', commit
     };
 
     try {
-        const update = await checkPullRequestExists(repoName, baseBranch, branchName);
-        if(update) return;
+        displayOutput('Checking for existing pull request...', '#aaa');
+        const existingPR = await checkPullRequestExists(repoName, baseBranch, branchName);
+        if (existingPR) {
+            displayOutput(`Pull request already exists`, '#aaa');
+            return existingPR;
+        } 
 
+        displayOutput('Creating new pull request...', '#aaa');
         const response = await fetch(
             `https://api.github.com/repos/${repoOwner}/${repoName}/pulls`,
             {
@@ -361,13 +682,13 @@ async function createPullRequest(config, branchName, baseBranch = 'main', commit
             }
         );
         const data = await handleResponse(response);
-        displayOutput( `Pull request created: <a href="${data.html_url}" target="_blank" style="color: green; text-decoration: none;">${data.html_url}</a>`, 'green');
+        displayOutput(`Pull request created successfully!`, '#aaa');
+        return data.html_url;
     } catch (error) {
-        displayOutput(`Error creating pull request:`, error.message);
+        displayOutput(`❌ Error creating pull request: ${error.message}`, 'red');
         throw error;
     }
 }
-
 // Fetch all collections from GitHub
 async function fetchAllCollectionsFromGitHub(config, branch) {
     const repoName = config.GITHUB_REPO.split('/').pop().replace('.git', '');
@@ -381,7 +702,9 @@ async function fetchAllCollectionsFromGitHub(config, branch) {
         const collections = [];
         for (const file of data) {
             if (file.type === 'file' && file.name.endsWith('.json')) {
+                //await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
                 const fileResponse = await fetch(file.download_url);
+                console.log('fetching file : ', file.name, file.download_url)
                 const fileData = await handleResponse(fileResponse);
                 collections.push({
                     name: file.name.replace('.json', ''),
@@ -457,38 +780,42 @@ async function hardPullPostmanCollections(config, branch) {
 }
 
 // Delete all Postman collections
+
+// Modified deleteAllPostmanCollections to return count
 async function deleteAllPostmanCollections(apiKey) {
+    let deletedCount = 0;
     try {
-        // Fetch all collections from Postman
+        displayOutput('Fetching existing collections...', '#aaa');
         const response = await fetch(`${postmanApiUrl}/collections`, {
             headers: { 'X-Api-Key': apiKey },
         });
 
-        // Check if the response is OK
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Parse the response data
         const data = await response.json();
         const collections = data.collections ?? [];
+        displayOutput(`Found ${collections.length} collections to delete`, '#aaa');
 
-        // Delete each collection
         for (const collection of collections) {
+            displayOutput(`Deleting collection: ${collection.name}`, '#aaa');
             const deleteResponse = await fetch(`${postmanApiUrl}/collections/${collection.uid}`, {
                 method: 'DELETE',
                 headers: { 'X-Api-Key': apiKey },
             });
 
-            // Check if the delete request was successful
             if (!deleteResponse.ok) {
-                throw new Error(`HTTP error! status: ${deleteResponse.status}`);
+                displayOutput(`Failed to delete collection: ${collection.name}`, '#aaa');
+                continue;
             }
+            deletedCount++;
         }
 
-        console.log('All Postman collections deleted successfully.');
+        displayOutput(`Deleted ${deletedCount} collections`, 'aaa');
+        return deletedCount;
     } catch (error) {
-        displayOutput('Error deleting Postman collections:'+ error.message, 'red');
+        displayOutput('❌ Error deleting Postman collections:'+ error.message, 'red');
         throw error;
     }
 }
@@ -496,10 +823,12 @@ async function deleteAllPostmanCollections(apiKey) {
 // Push collections and environments to GitHub
 async function pushOnGithub(config, newBranch, baseBranch = 'main', commitMsg) {
     await ensureBaseBranchExists(config, baseBranch);
+    updateProgressBar(20, 'Creating branch...');
+
     await createBranch(config, baseBranch, newBranch);
 
     const collections = await getCollections(config.POSTMAN_API_KEY);
-    const oldCollections = await fetchAllCollectionsFromGitHub(config, baseBranch);
+    //const oldCollections = await fetchAllCollectionsFromGitHub(config, baseBranch);
 
     for (const collection of collections) {
         const filePath = `Collections/${collection.info.name}.json`;
@@ -510,7 +839,8 @@ async function pushOnGithub(config, newBranch, baseBranch = 'main', commitMsg) {
     const envFilePath = `Environments/environments.json`;
     await saveToGitHub(environments, config, envFilePath, newBranch, "Sync all environments");
 
-    const url = await createPullRequest(config, newBranch, baseBranch, commitMsg);
+    await createPullRequest(config, newBranch, baseBranch, commitMsg);
+    updateProgressBar(100, 'pull request created.');
 }
 
 // Pull collections and environments from GitHub
@@ -555,6 +885,21 @@ const branchDropdown = document.getElementById("branch");
 
 
 document.addEventListener("DOMContentLoaded", function () {
+       // Add progress bar container if it doesn't exist
+       if (!document.getElementById('progress-container')) {
+        const progressContainer = document.createElement('div');
+        progressContainer.id = 'progress-container';
+        progressContainer.className = 'progress-container';
+        progressContainer.style.display = 'none';
+        
+        const progressBar = document.createElement('div');
+        progressBar.id = 'progress-bar';
+        progressBar.className = 'progress-bar';
+        progressBar.textContent = '0%';
+        
+        progressContainer.appendChild(progressBar);
+        document.querySelector('.terminal').appendChild(progressContainer);
+    }
     const commandInput = document.getElementById("commandInput");
     const logSection = document.querySelector(".logs");
     const prefix = "COMMAND >> ";
@@ -864,3 +1209,176 @@ document.getElementById("clearButton").addEventListener("click", function () {
 });
 
 
+
+async function checkPullRequestExists(repoName, baseBranch, headBranch) {
+    const repoOwner = userCredentials.GITHUB_USERNAME;
+    const headers = {
+        'Authorization': `token ${userCredentials.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+    };
+
+    try {
+        // More specific API query to filter PRs by head branch
+        const response = await fetch(
+            `https://api.github.com/repos/${repoOwner}/${repoName}/pulls?state=open&head=${repoOwner}:${headBranch}`,
+            { headers }
+        );
+        
+        if (!response.ok) {
+            // If 404, no PR exists (return false)
+            if (response.status === 404) return false;
+            throw new Error(`Failed to fetch pull requests: ${response.status}`);
+        }
+
+        const pullRequests = await response.json();
+        
+        // Since we filtered by head branch, just need to check base branch
+        const existingPR = pullRequests.find(pr => pr.base.ref === baseBranch);
+
+        if (existingPR) {
+            return existingPR.html_url;
+        }
+        
+        return false;
+    } catch (error) {
+        // Don't show error if it's just that no PR exists
+        if (!error.message.includes('404')) {
+            displayOutput(`Error checking for existing pull request: ${error.message}`, 'red');
+        }
+        return false;
+    }
+}
+
+// Progress bar functions
+function showProgressBar() {
+    const progressContainer = document.getElementById('progress-container');
+    progressContainer.style.display = 'block';
+    updateProgressBar(0, 'Starting...');
+}
+
+function hideProgressBar() {
+    const progressContainer = document.getElementById('progress-container');
+    progressContainer.style.display = 'none';
+}
+
+function updateProgressBar(percent, message = '') {
+    const progressBar = document.getElementById('progress-bar');
+    percent = Math.min(100, Math.max(0, percent)); // Clamp between 0-100
+    progressBar.style.width = `${percent}%`;
+    progressBar.textContent = message || `${percent}%`;
+    
+    // Change color based on progress
+    if (percent < 30) {
+        progressBar.style.background = 'linear-gradient(90deg, #FF5722, #FF9800)';
+    } else if (percent < 70) {
+        progressBar.style.background = 'linear-gradient(90deg, #FF9800, #FFEB3B)';
+    } else {
+        progressBar.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
+    }
+}
+
+
+async function getChangedCollections(config, branch) {
+    try {
+        displayOutput('Comparing Postman and GitHub collections...', '#aaa');
+        
+        // 1. Get data from both sources
+        const [githubCollections, postmanCollections, githubEnvs, postmanEnvs] = await Promise.all([
+            fetchAllCollectionsFromGitHub(config, branch).catch(() => []),
+            getCollections(config.POSTMAN_API_KEY).catch(() => []),
+            fetchEnvironmentsFromGitHub(config, branch).catch(() => []),
+            getEnvironments(config.POSTMAN_API_KEY).catch(() => [])
+        ]);
+
+        // Helper function to parse dates safely
+        const parseDate = (dateString) => {
+            if (!dateString) return new Date(0); // Default to epoch if missing
+            const date = new Date(dateString);
+            return isNaN(date.getTime()) ? new Date(0) : date;
+        };
+
+        // 2. Compare collections
+        const changes = {
+            updatedCollections: [],
+            newCollections: [],
+            deletedCollections: [],
+            updatedEnvironments: [],
+            newEnvironments: [],
+            deletedEnvironments: []
+        };
+
+        // Check Postman collections against GitHub
+        for (const postmanCol of postmanCollections) {
+            const colName = postmanCol.info?.name;
+            if (!colName) continue;
+
+            const githubCol = githubCollections[0]?.content.find(c => c.info?.name === colName);
+            
+            if (!githubCol) {
+                changes.newCollections.push(postmanCol);
+            } else {
+                const postmanDate = parseDate(postmanCol.info?.updatedAt);
+                const githubDate = parseDate(githubCol.info?.updatedAt);
+                
+                if (postmanDate > githubDate) {
+                    changes.updatedCollections.push(postmanCol);
+                }
+            }
+        }
+
+        // Check for deleted collections
+        for (const githubCol of (githubCollections[0]?.content||[])) {
+            const colName = githubCol.info?.name;
+            if (!colName) continue;
+
+            const existsInPostman = postmanCollections.some(c => c.info?.name === colName);
+            if (!existsInPostman) {
+                changes.deletedCollections.push(githubCol);
+            }
+        }
+
+        // 3. Compare environments
+        for (const postmanEnv of postmanEnvs) {
+            const envName = postmanEnv.name;
+            if (!envName) continue;
+
+            const githubEnv = githubEnvs.find(e => e.name === envName);
+            
+            if (!githubEnv) {
+                changes.newEnvironments.push(postmanEnv);
+            } else {
+                const postmanDate = parseDate(postmanEnv.updatedAt);
+                const githubDate = parseDate(githubEnv.updatedAt);
+                
+                if (postmanDate > githubDate) {
+                    changes.updatedEnvironments.push(postmanEnv);
+                }
+            }
+        }
+
+        // Check for deleted environments
+        for (const githubEnv of githubEnvs) {
+            const envName = githubEnv.name;
+            if (!envName) continue;
+
+            const existsInPostman = postmanEnvs.some(e => e.name === envName);
+            if (!existsInPostman) {
+                changes.deletedEnvironments.push(githubEnv);
+            }
+        }
+
+        // 4. Display results
+        displayOutput('Comparison results -> ', '#aaa');
+        displayOutput(`New collections: ${changes.newCollections.length}`, '#aaa');
+        displayOutput(`Updated collections: ${changes.updatedCollections.length}`, '#aaa');
+        displayOutput(`Deleted collections: ${changes.deletedCollections.length}`, '#aaa');
+        displayOutput(`New environments: ${changes.newEnvironments.length}`, '#aaa');
+        displayOutput(`Updated environments: ${changes.updatedEnvironments.length}`, '#aaa');
+        displayOutput(`Deleted environments: ${changes.deletedEnvironments.length}`, '#aaa');
+
+        return changes;
+    } catch (error) {
+        displayOutput(`❌ Error comparing collections: ${error.message}`, 'red');
+        throw error;
+    }
+}
