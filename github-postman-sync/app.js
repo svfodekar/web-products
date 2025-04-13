@@ -149,7 +149,7 @@ async function handleGitPush(commandParams) {
         updateProgressBar(20, '🌱 Checking branch...');
         await createBranch(userCredentials, destinationBranch, newBranch);
         
-        updateProgressBar(30, '📦 Comparing changes...');
+        updateProgressBar(45, '📦 Comparing changes...');
 
         //const collections = await getCollections(userCredentials.POSTMAN_API_KEY);
 
@@ -164,7 +164,7 @@ async function handleGitPush(commandParams) {
 
         const collections = [...changes.updatedCollections, ...changes.newCollections];
         if(collections.length > 0){
-            updateProgressBar(40, '💾 Commiting collections to GitHub...');
+            updateProgressBar(60, '💾 Commiting collections to GitHub...');
             displayOutput(`Commiting collections to GitHub...`, '#aaa');
             for (let i = 0; i < collections.length; i++) {
                 //await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
@@ -172,7 +172,7 @@ async function handleGitPush(commandParams) {
                 const filePath = `Collections/${encodeURIComponent(collection.info.name)}.json`;
                 await saveToGitHub(collections, userCredentials, filePath, newBranch, `Sync collection: ${collection.info.name}`);
             }
-            updateProgressBar(40, '💾 Committed collections to GitHub');
+            updateProgressBar(70, '💾 Committed collections to GitHub');
             displayOutput(` Committed collections to GitHub`, '#aaa');
         }
        //await saveToGitHubBatch(collections, userCredentials, newBranch, `Sync collections: ${commitMsg}`);
