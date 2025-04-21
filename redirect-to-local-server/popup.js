@@ -96,7 +96,7 @@ async function renderRedirectList(redirects) {
               </div>
               <div class="action-container">
               <span class="method-badge ${methodClass}">${method}</span>
-              <button class="enable-btn" data-rule-id="${redirect.redirectRuleId}" data-enabled="${redirect.enabled}" style="${enableBtnColorBk}; color: ${enableBtnColor};">${redirect.enabled ? 'Enable' :  'Disable' }</button>
+              <button class="enable-btn" data-rule-id="${redirect.redirectRuleId}" data-enabled="${redirect.enabled}" style="${enableBtnColorBk}; color: ${enableBtnColor};">${redirect.enabled ? 'Enable' :  'Enable' }</button>
                   <button class="edit-btn" data-rule-id="${redirect.redirectRuleId}">Edit</button>
                   <button class="delete-btn" data-rule-id="${redirect.redirectRuleId}">Delete</button>
               </div>
@@ -114,7 +114,7 @@ async function renderRedirectList(redirects) {
       const ruleId = event.target.getAttribute('data-rule-id');
       const isEnabled = event.target.getAttribute('data-enabled') === 'true';
       const newState = !isEnabled;
-      event.target.textContent = newState ? 'Disable' : 'Enable';
+      event.target.textContent = newState ? 'Enable' : 'Enable';
       event.target.setAttribute('data-enabled', newState);
       handleEnableToggle(ruleId, newState);
     });
