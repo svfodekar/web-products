@@ -310,7 +310,8 @@ body {
 }
 
 #branchSelect {
-    width: 112%;
+    width: 107%;
+    margin-top: 19%;
 }
 
 #branchInput {
