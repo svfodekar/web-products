@@ -516,7 +516,7 @@ async function saveToGitHub(content, config, filePath, branch, message) {
             }
         );
         await handleResponse(response);
-        console.log(`File '${filePath}' saved successfully on branch '${branch}'.`);
+      //console.log(`File '${filePath}' saved successfully on branch '${branch}'.`);
     } catch (error) {
         displayOutput(`Error saving file '${filePath}' to GitHub: ${error.message}`, 'red');
         throw error;
@@ -540,7 +540,7 @@ async function createPostmanCollection(apiKey, collection) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log(`Collection '${collection.info.name}' added to Postman.`);
+      //console.log(`Collection '${collection.info.name}' added to Postman.`);
     } catch (error) {
         displayOutput(`Error creating Postman collection '${collection.info.name}':`+ error.messag, 'red');
         throw error;
@@ -560,7 +560,7 @@ async function ensureBaseBranchExists(config, baseBranch) {
         );
         if (!response.ok) {
             if (response.status === 404) {
-                console.log(`Base branch '${baseBranch}' does not exist. Creating it...`);
+              //console.log(`Base branch '${baseBranch}' does not exist. Creating it...`);
                 await createInitialCommit(config, baseBranch);
             } else {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -603,7 +603,7 @@ async function createInitialCommit(config, baseBranch) {
             }
         );
         await handleResponse(response);
-        console.log(`Base branch '${baseBranch}' created successfully with an initial commit.`);
+      //console.log(`Base branch '${baseBranch}' created successfully with an initial commit.`);
     } catch (error) {
         displayOutput(`Error creating initial commit: ${error.message}`, 'red');
         throw error;
@@ -691,30 +691,57 @@ async function createPullRequest(config, branchName, baseBranch = 'main', commit
 }
 // Fetch all collections from GitHub
 async function fetchAllCollectionsFromGitHub(config, branch) {
+  //console.log('[GitHub] Starting to fetch collections...');
     const repoName = config.GITHUB_REPO.split('/').pop().replace('.git', '');
-    const headers = { 'Authorization': `token ${config.GITHUB_TOKEN}` };
+  //console.log(`[GitHub] Repository name: ${repoName}`);
+    
+    const headers = { 
+        'Authorization': `token ${config.GITHUB_TOKEN}`,
+        'User-Agent': 'Postman-GitHub-Sync'
+    };
     const baseUrl = `https://api.github.com/repos/${config.GITHUB_USERNAME}/${repoName}/contents/Collections`;
+  //console.log(`[GitHub] Constructed base URL: ${baseUrl}`);
 
     try {
+      //console.log(`[GitHub] Fetching directory contents from branch: ${branch}`);
         const response = await fetch(`${baseUrl}?ref=${branch}`, { headers });
+        
+      //console.log(`[GitHub] Received response status: ${response.status}`);
         const data = await handleResponse(response);
+      //console.log(`[GitHub] Found ${data.length} items in Collections directory`);
 
-        const collections = [];
-        for (const file of data) {
-            if (file.type === 'file' && file.name.endsWith('.json')) {
-                //await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+        // Filter and prepare all file download requests
+        const jsonFiles = data.filter(file => 
+            file.type === 'file' && file.name.endsWith('.json')
+        );
+      //console.log(`[GitHub] Found ${jsonFiles.length} JSON collection files`);
+
+        // Process all files in parallel using Promise.all
+      //console.log('[GitHub] Starting parallel download of collection files...');
+        const collectionPromises = jsonFiles.map(async (file) => {
+          //console.log(`[GitHub] Fetching file: ${file.name} from ${file.download_url}`);
+            try {
                 const fileResponse = await fetch(file.download_url);
-                console.log('fetching file : ', file.name, file.download_url)
                 const fileData = await handleResponse(fileResponse);
-                collections.push({
+              //console.log(`[GitHub] Successfully fetched file: ${file.name}`);
+                return {
                     name: file.name.replace('.json', ''),
                     content: fileData,
-                });
+                };
+            } catch (fileError) {
+                console.error(`[GitHub] Error processing file ${file.name}:`, fileError);
+                return null; // Return null for failed files
             }
-        }
+        });
+
+        // Wait for all downloads to complete
+        const collections = (await Promise.all(collectionPromises)).filter(Boolean);
+      //console.log(`[GitHub] Successfully fetched ${collections.length} collections`);
+
         return collections;
     } catch (error) {
-        displayOutput('Error fetching collections from GitHub:'+ error.message, 'red');
+        console.error('[GitHub] Error in fetchAllCollectionsFromGitHub:', error);
+        displayOutput(`Error fetching collections from GitHub: ${error.message}`, 'red');
         return [];
     }
 }
@@ -769,7 +796,7 @@ async function hardPullPostmanCollections(config, branch) {
             }
         }
 
-        console.log('Hard pull operation completed.');
+      //console.log('Hard pull operation completed.');
     } catch (error) {
         displayOutput('Error pulling collections from GitHub:'+error.message, 'red');
         if (error.message.includes('404')) {
@@ -848,8 +875,8 @@ async function pullFromGithub(config, branch) {
     const collections = await fetchAllCollectionsFromGitHub(config, branch);
     const environments = await fetchEnvironmentsFromGitHub(config, branch);
 
-    console.log('Collections:', collections);
-    console.log('Environments:', environments);
+  //console.log('Collections:', collections);
+  //console.log('Environments:', environments);
 }
 
 
@@ -1318,7 +1345,7 @@ async function getChangedCollections(config, branch) {
             const colName = postmanCol.info?.name;
             if (!colName) continue;
 
-            const githubCol = githubCollections[0]?.content.find(c => c.info?.name === colName);
+            const githubCol = githubCollections?.find(c => c.name === colName)?.content;
             
             if (!githubCol) {
                 changes.newCollections.push(postmanCol);
@@ -1333,8 +1360,8 @@ async function getChangedCollections(config, branch) {
         }
 
         // Check for deleted collections
-        for (const githubCol of (githubCollections[0]?.content||[])) {
-            const colName = githubCol.info?.name;
+        for (const githubCol of githubCollections) {
+            const colName = githubCol.name;
             if (!colName) continue;
 
             const existsInPostman = postmanCollections.some(c => c.info?.name === colName);
