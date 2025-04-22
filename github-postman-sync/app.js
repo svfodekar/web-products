@@ -159,6 +159,7 @@ async function handleGitPush(commandParams) {
         const hasChanges = Object.values(changes).some(array => array.length > 0);
         if(!hasChanges){
             displayOutput(`❌ No Changes found !`, '#aaa');
+            updateProgressBar(100, '❌ No Changes found');
             return;
         }
 
