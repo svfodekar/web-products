@@ -13,13 +13,14 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Github Postman Sync Engine</title>
+    <title>Github Postman Sync</title>
     <link rel="stylesheet" href="app.css">
     <link rel="icon" type="image/png" href="logo.jpg"> <!-- Favicon link -->
 </head>
 
 <body>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <div class="main">
         <!-- Header -->
         <div class="header">
@@ -79,10 +80,10 @@
 
                 <div class="github-token-link">
                     <label for="github_token">GitHub Token</label>
-                    <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">get token</a>
-<span class="tip" style="font-size: 11px;">
-  Tip: Use 'repository-scoped tokens' with Read/Write access only to 'Contents' and 'Pull Requests' for better security and control
-</span>
+                    <a href="https://github.com/settings/personal-access-tokens/new" target="_blank"> <i class="fas fa-external-link-alt"></i></a>
+                    <span class="tip" style="font-size: 11px;">
+                        Tip: Use <strong>&nbsp;repository-scoped tokens&nbsp;</strong> with Read/Write access only to <strong>&nbsp;Contents&nbsp;</strong> and <strong>&nbsp;Pull Requests&nbsp;</strong> for better security and control
+                      </span>
 
                 </div>
                 <input type="text" id="github_token" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
@@ -91,7 +92,10 @@
                 <div>
                     <div class="github-token-link">
                         <label for="postman_api_key">Postman API Key</label>
-                        <a href="https://web.postman.co/settings/me/api-keys" target="_blank">get API key</a>
+
+                        <a href="https://web.postman.co/settings/me/api-keys" target="_blank">
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
 
                     </div>
                     <input type="text" id="postman_api_key" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
