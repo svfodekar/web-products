@@ -1239,7 +1239,9 @@ async function validateCredentials(githubUsername, githubToken, postmanApiKey ) 
 
 
 document.getElementById("clearButton").addEventListener("click", function () {
-    location.reload(); // Refresh the page
+    //location.reload(); // Refresh the page
+    const logSection = document.querySelector(".logs");
+    logSection.innerHTML = ''
 });
 
 
