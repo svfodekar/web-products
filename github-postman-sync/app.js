@@ -139,7 +139,7 @@ async function handleGitPush(commandParams) {
     
     showProgressBar();
     try {
-        commitMsg = commitMsg.slice(1, commitMsg.length - 1);
+       // commitMsg = commitMsg.slice(1, commitMsg.length - 1);
         displayOutput(`\nStarting push operation to new branch: ${newBranch}`, '#aaa');
         
         updateProgressBar(10, '🔍 Validating base branch...');
@@ -170,7 +170,7 @@ async function handleGitPush(commandParams) {
                 //await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
                 const collection = collections[i];
                 const filePath = `Collections/${encodeURIComponent(collection.info.name)}.json`;
-                await saveToGitHub(collections, userCredentials, filePath, newBranch, `Sync collection: ${collection.info.name}`);
+                await saveToGitHub(collection, userCredentials, filePath, newBranch, `Sync collection: ${collection.info.name}`);
             }
             updateProgressBar(70, '💾 Committed collections to GitHub');
             displayOutput(` Committed collections to GitHub`, '#aaa');
@@ -1034,6 +1034,8 @@ repoInput.addEventListener("focus", function () {
     } else {
         updateRepoDropdown(); // Show all repos immediately
     }
+    isBranchFetched = false;
+    isReposFetched = false;
 });
 
 repoInput.addEventListener("input", updateRepoDropdown);
@@ -1138,6 +1140,8 @@ document.getElementById("saveConfig").addEventListener("click", async function (
     let githubUsername = document.getElementById("github_username").value;
     let githubToken = document.getElementById("github_token").value || localStorage.getItem("GITHUB_TOKEN");
     let postmanApiKey = document.getElementById("postman_api_key").value || localStorage.getItem("POSTMAN_API_KEY");
+    isBranchFetched = false;
+    isReposFetched = false;
     if (false == await validateCredentials(githubUsername, githubToken, postmanApiKey)) {
         saveButton.innerHTML = "Save";
         return;
@@ -1153,6 +1157,8 @@ document.getElementById("saveConfig").addEventListener("click", async function (
     userCredentials.GITHUB_USERNAME = localStorage.getItem("GITHUB_USERNAME") || '';
     userCredentials.GITHUB_TOKEN = localStorage.getItem("GITHUB_TOKEN") || '';
     userCredentials.POSTMAN_API_KEY = localStorage.getItem("POSTMAN_API_KEY") || '';
+    document.getElementById("github_token").value ='';
+    document.getElementById("postman_api_key").value = '';
 
     saveButton.innerHTML = "Save";
     alert("✅ Configurations have been securely saved to your local storage.");
@@ -1369,12 +1375,24 @@ async function getChangedCollections(config, branch) {
 
         // 4. Display results
         displayOutput('Comparison results -> ', '#aaa');
-        displayOutput(`New collections: ${changes.newCollections.length}`, '#aaa');
-        displayOutput(`Updated collections: ${changes.updatedCollections.length}`, '#aaa');
-        displayOutput(`Deleted collections: ${changes.deletedCollections.length}`, '#aaa');
-        displayOutput(`New environments: ${changes.newEnvironments.length}`, '#aaa');
-        displayOutput(`Updated environments: ${changes.updatedEnvironments.length}`, '#aaa');
-        displayOutput(`Deleted environments: ${changes.deletedEnvironments.length}`, '#aaa');
+        if (changes.newCollections.length > 0) {
+            displayOutput(`New collections: ${changes.newCollections.length}`, '#aaa');
+        }
+        if (changes.updatedCollections.length > 0) {
+            displayOutput(`Updated collections: ${changes.updatedCollections.length}`, '#aaa');
+        }
+        if (changes.deletedCollections.length > 0) {
+            displayOutput(`Deleted collections: ${changes.deletedCollections.length}`, '#aaa');
+        }
+        if (changes.newEnvironments.length > 0) {
+            displayOutput(`New environments: ${changes.newEnvironments.length}`, '#aaa');
+        }
+        if (changes.updatedEnvironments.length > 0) {
+            displayOutput(`Updated environments: ${changes.updatedEnvironments.length}`, '#aaa');
+        }
+        if (changes.deletedEnvironments.length > 0) {
+            displayOutput(`Deleted environments: ${changes.deletedEnvironments.length}`, '#aaa');
+        }
 
         return changes;
     } catch (error) {
