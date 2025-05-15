@@ -46,7 +46,7 @@ function updateProgressBar(percent, message = '') {
         displayOutput(`[Progress] ${message}`, '#aaa');
     }
 }
-
+//use
 async function handleGitPull(branchName) {
     if (!branchName || branchName.split(' ').length > 1) {
         displayOutput('❌ Invalid command! Correct usage - git pull branch-name', 'red');
@@ -65,12 +65,12 @@ async function handleGitPull(branchName) {
         updateProgressBar(40, '🌐 Fetching environments from GitHub...');
         const environments = await fetchEnvironmentsFromGitHub(userCredentials, branchName);
         displayOutput(`Found ${environments.length} environments on GitHub`, '#aaa');
-        
+
         updateProgressBar(60, '🔄 Processing data...');
-    await pullFromGithub(userCredentials, branchName);
-    updateProgressBar(100, '🎉 Pull completed successfully!');
-    displayOutput(`\n✅ Successfully pulled ${collections.length} collections and ${environments.length} environments from branch: ${branchName}\n`, 'green');
-    
+        await pullFromGithub(userCredentials, collections, environments);
+        updateProgressBar(100, '🎉 Pull completed successfully!');
+        displayOutput(`\n✅ Successfully pulled collections and environments from branch: ${branchName}\n`, 'green');
+
     setTimeout(hideProgressBar, 1000);
 } catch (e) {
     updateProgressBar(0, '❌ Operation failed');
@@ -90,26 +90,38 @@ async function handleGitPullHard(branchName) {
         updateProgressBar(5, '⚠️ Starting HARD pull operation...');
         displayOutput(`\nInitiating HARD pull from branch: ${branchName}\nThis will DELETE all existing Postman collections first!`, '#aaa');
         
-        updateProgressBar(10, '🗑️ Deleting existing collections...');
+        updateProgressBar(40, '🗑️ Deleting existing collections...');
         const deleteCount = await deleteAllPostmanCollections(userCredentials.POSTMAN_API_KEY);
         displayOutput(`Deleted ${deleteCount} existing collections`, '#aaa');
         
         updateProgressBar(30, '📥 Fetching collections from GitHub...');
         const collections = await fetchAllCollectionsFromGitHub(userCredentials, branchName);
         displayOutput(`Found ${collections.length} collections on GitHub`, '#aaa');
-        
+        //console.log("collections : ", collections)
         updateProgressBar(50, '⏳ Importing collections to Postman...');
         let importedCount = 0;
-        for (const collection of collections) {
+        for (let collection of collections) {
+            collection = collection.content;
             await createPostmanCollection(userCredentials.POSTMAN_API_KEY, collection);
             importedCount++;
             updateProgressBar(50 + (importedCount/collections.length)*40, 
                 `📦 Importing collection ${importedCount}/${collections.length}: ${collection.info.name}`);
         }
-        
+        displayOutput(`Imported ${collections.length} collections on postman`, '#aaa');
+        await deleteAllPostmanEnvironments(userCredentials.POSTMAN_API_KEY);
         updateProgressBar(95, '🌐 Fetching environments...');
+
         const environments = await fetchEnvironmentsFromGitHub(userCredentials, branchName);
         displayOutput(`Found ${environments.length} environments on GitHub`, '#aaa');
+
+        importedCount = 0;
+        for (let environment of environments) {
+            await createPostmanEnvironment(userCredentials.POSTMAN_API_KEY, environment);
+            importedCount++;
+            updateProgressBar(80 + (importedCount/environments.length)*40, 
+                `📦 Importing environment ${importedCount}/${collections.length}: ${environment.name}`);
+        }
+        displayOutput(`Imported ${environments.length} environments on postman`, '#aaa');
         
         updateProgressBar(100, '🎉 HARD pull completed!');
         displayOutput(`\n✅ Successfully imported ${importedCount} collections and ${environments.length} environments from branch: ${branchName}\n`, 'green');
@@ -253,6 +265,8 @@ function initializeTerminal() {
     ensureInputFocus();
 }
 
+
+//use
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Helper function to handle fetch responses
 async function handleResponse(response) {
@@ -266,49 +280,52 @@ async function handleResponse(response) {
     return response.json();
 }
 
-// Get Postman collections
+//use
 async function getCollections(apiKey) {
-    const collections = [];
     try {
         const response = await fetch(`${postmanApiUrl}/collections`, {
             headers: { 'X-Api-Key': apiKey },
         });
         const data = await handleResponse(response);
-
-        for (const collection of data.collections) {
+        
+        const collectionPromises = data.collections.map(async (collection) => {
             const detailedResponse = await fetch(`${postmanApiUrl}/collections/${collection.uid}`, {
                 headers: { 'X-Api-Key': apiKey },
             });
             const detailedData = await handleResponse(detailedResponse);
-            collections.push(detailedData.collection);
-        }
+            return detailedData.collection;
+        });
+
+        return await Promise.all(collectionPromises);
     } catch (error) {
-        displayOutput("Error fetching collections:"+ error.message, 'red');
+        displayOutput(`Error fetching collections: ${error.message}`, 'red');
+        return [];
     }
-    return collections;
 }
 
-// Get Postman environments
+//use
 async function getEnvironments(apiKey) {
-    const environments = [];
     try {
         const response = await fetch(`${postmanApiUrl}/environments`, {
             headers: { 'X-Api-Key': apiKey },
         });
         const data = await handleResponse(response);
 
-        for (const env of data.environments) {
+        const environmentPromises = data.environments.map(async (env) => {
             const detailedResponse = await fetch(`${postmanApiUrl}/environments/${env.uid}`, {
                 headers: { 'X-Api-Key': apiKey },
             });
             const detailedData = await handleResponse(detailedResponse);
-            environments.push(detailedData.environment);
-        }
+            return detailedData.environment;
+        });
+
+        return await Promise.all(environmentPromises);
     } catch (error) {
-        displayOutput("Error fetching environments:"+ error.message, 'red');
+        displayOutput(`Error fetching environments: ${error.message}`, 'red');
+        return [];
     }
-    return environments;
 }
+
 
 // Modified saveToGitHubBatch function
 async function saveToGitHubBatch(collections, config, branch, commitMsg) {
@@ -524,6 +541,7 @@ async function saveToGitHub(content, config, filePath, branch, message) {
     }
 }
 
+//use
 // Create a new collection in Postman
 async function createPostmanCollection(apiKey, collection) {
     try {
@@ -544,6 +562,29 @@ async function createPostmanCollection(apiKey, collection) {
       //console.log(`Collection '${collection.info.name}' added to Postman.`);
     } catch (error) {
         displayOutput(`Error creating Postman collection '${collection.info.name}':`+ error.messag, 'red');
+        throw error;
+    }
+}
+
+//use
+async function createPostmanEnvironment(apiKey, environment) {
+    try {
+        const response = await fetch(`${postmanApiUrl}/environments`, {
+            method: 'POST',
+            headers: {
+                'X-Api-Key': apiKey,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ environment }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        //console.log(`Environment '${environment.name}' added to Postman.`);
+    } catch (error) {
+        displayOutput(`Error creating Postman environment '${environment.name}': ` + error.message, 'red');
         throw error;
     }
 }
@@ -690,6 +731,8 @@ async function createPullRequest(config, branchName, baseBranch = 'main', commit
         throw error;
     }
 }
+
+//use
 // Fetch all collections from GitHub
 async function fetchAllCollectionsFromGitHub(config, branch) {
   //console.log('[GitHub] Starting to fetch collections...');
@@ -809,6 +852,7 @@ async function hardPullPostmanCollections(config, branch) {
 
 // Delete all Postman collections
 
+//use
 // Modified deleteAllPostmanCollections to return count
 async function deleteAllPostmanCollections(apiKey) {
     let deletedCount = 0;
@@ -827,7 +871,7 @@ async function deleteAllPostmanCollections(apiKey) {
         displayOutput(`Found ${collections.length} collections to delete`, '#aaa');
 
         for (const collection of collections) {
-            displayOutput(`Deleting collection: ${collection.name}`, '#aaa');
+            //displayOutput(`Deleting collection: ${collection.name}`, '#aaa');
             const deleteResponse = await fetch(`${postmanApiUrl}/collections/${collection.uid}`, {
                 method: 'DELETE',
                 headers: { 'X-Api-Key': apiKey },
@@ -840,10 +884,49 @@ async function deleteAllPostmanCollections(apiKey) {
             deletedCount++;
         }
 
-        displayOutput(`Deleted ${deletedCount} collections`, 'aaa');
+        // displayOutput(`Deleted ${deletedCount} collections`, 'aaa');
         return deletedCount;
     } catch (error) {
         displayOutput('❌ Error deleting Postman collections:'+ error.message, 'red');
+        throw error;
+    }
+}
+
+//use
+async function deleteAllPostmanEnvironments(apiKey) {
+    let deletedCount = 0;
+    try {
+        displayOutput('Fetching existing environments...', '#aaa');
+        const response = await fetch(`${postmanApiUrl}/environments`, {
+            headers: { 'X-Api-Key': apiKey },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const environments = data.environments ?? [];
+        displayOutput(`Found ${environments.length} environments to delete`, '#aaa');
+
+        for (const environment of environments) {
+            // displayOutput(`Deleting environment: ${environment.name}`, '#aaa');
+            const deleteResponse = await fetch(`${postmanApiUrl}/environments/${environment.uid}`, {
+                method: 'DELETE',
+                headers: { 'X-Api-Key': apiKey },
+            });
+
+            if (!deleteResponse.ok) {
+                displayOutput(`Failed to delete environment: ${environment.name}`, '#aaa');
+                continue;
+            }
+            deletedCount++;
+        }
+
+        // displayOutput(`Deleted ${deletedCount} environments`, '#aaa');
+        return deletedCount;
+    } catch (error) {
+        displayOutput('❌ Error deleting Postman environments: ' + error.message, 'red');
         throw error;
     }
 }
@@ -871,14 +954,118 @@ async function pushOnGithub(config, newBranch, baseBranch = 'main', commitMsg) {
     updateProgressBar(100, 'pull request created.');
 }
 
+//use
 // Pull collections and environments from GitHub
-async function pullFromGithub(config, branch) {
-    const collections = await fetchAllCollectionsFromGitHub(config, branch);
-    const environments = await fetchEnvironmentsFromGitHub(config, branch);
+async function pullFromGithub(config, githubCollections, githubEnvironments) {
+    const postmanApiKey = config.POSTMAN_API_KEY;
 
-  //console.log('Collections:', collections);
-  //console.log('Environments:', environments);
+    // 1. Fetch current state of Postman
+    const [postmanCollections, postmanEnvs] = await Promise.all([
+        getCollections(postmanApiKey).catch(() => []),
+        getEnvironments(postmanApiKey).catch(() => [])
+    ]);
+    updateProgressBar(70, '🔄 Processing data...');
+    displayOutput(`Doing operations on postman...`, '#aaa');
+    const parseDate = (d) => new Date(d || 0);
+
+    // 🔄 Sync Collections
+    for (const githubCol of githubCollections) {
+        const matchingPostmanCol = postmanCollections.find(p => p.info?.name === githubCol.name);
+
+        if (!matchingPostmanCol) {
+            // CREATE collection
+            await createPostmanCollection(postmanApiKey, githubCol.content);
+            displayOutput(`Created new collection: ${githubCol.name}`, '#aaa');
+        } else {
+            const githubDate = parseDate(githubCol.content.info?.updatedAt);
+            const postmanDate = parseDate(matchingPostmanCol.info?.updatedAt);
+
+            if (githubDate > postmanDate) {
+                // UPDATE collection
+                await updatePostmanCollection(postmanApiKey, matchingPostmanCol.info?.uid, githubCol.content);
+                displayOutput(`Updated collection: ${githubCol.name}`, '#aaa');
+            }
+        }
+    }
+    // DELETE collections not in GitHub
+    for (const postmanCol of postmanCollections) {
+        const found = githubCollections.some(g => g.name === postmanCol.info?.name);
+        if (!found) {
+            await deletePostmanCollection(postmanApiKey, postmanCol.info?.uid);
+            displayOutput(`Deleted collection: ${postmanCol.info?.name}`, '#aaa');
+        }
+    }
+    updateProgressBar(80, '');
+    // 🔄 Sync Environments
+    for (const githubEnv of githubEnvironments) {
+        const matchingPostmanEnv = postmanEnvs.find(p => p.name === githubEnv.name);
+
+        if (!matchingPostmanEnv) {
+            // CREATE environment
+            await createPostmanEnvironment(postmanApiKey, githubEnv);
+            displayOutput(`Created new environment: ${githubEnv.name}`, '#aaa');
+        } else {
+            const githubDate = parseDate(githubEnv.updatedAt);
+            const postmanDate = parseDate(matchingPostmanEnv.updatedAt);
+
+            if (githubDate > postmanDate) {
+                // UPDATE environment
+                await updatePostmanEnvironment(postmanApiKey, matchingPostmanEnv.info?.uid, githubEnv);
+                displayOutput(`Updated environment: ${githubEnv.name}`, '#aaa');
+            }
+        }
+    }
+
+    // DELETE environments not in GitHub
+    for (const postmanEnv of postmanEnvs) {
+        const found = githubEnvironments.some(g => g.name === postmanEnv.name);
+        if (!found) {
+            await deletePostmanEnvironment(postmanApiKey, postmanEnv.info?.uid);
+            displayOutput(`Deleted environment: ${postmanEnv.name}`, '#aaa');
+        }
+    }
 }
+
+//use
+async function updatePostmanEnvironment(apiKey, uid, environment) {
+    await fetch(`${postmanApiUrl}/environments/${uid}`, {
+        method: 'PUT',
+        headers: {
+            'X-Api-Key': apiKey,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ environment }),
+    });
+}
+
+//use
+async function deletePostmanEnvironment(apiKey, uid) {
+    await fetch(`${postmanApiUrl}/environments/${uid}`, {
+        method: 'DELETE',
+        headers: { 'X-Api-Key': apiKey },
+    });
+}
+
+//use
+async function updatePostmanCollection(apiKey, uid, collection) {
+    await fetch(`${postmanApiUrl}/collections/${uid}`, {
+        method: 'PUT',
+        headers: {
+            'X-Api-Key': apiKey,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ collection }),
+    });
+}
+
+//use
+async function deletePostmanCollection(apiKey, uid) {
+    await fetch(`${postmanApiUrl}/collections/${uid}`, {
+        method: 'DELETE',
+        headers: { 'X-Api-Key': apiKey },
+    });
+}
+
 
 
 function clearTerminal() {
@@ -1428,5 +1615,33 @@ async function getChangedCollections(config, branch) {
     } catch (error) {
         displayOutput(`❌ Error comparing collections: ${error.message}`, 'red');
         throw error;
+    }
+}
+
+// Fetch all collections from GitHub
+async function fetchAllCollectionsFromGitHubPullHard(config, branch) {
+    const repoName = config.GITHUB_REPO.split('/').pop().replace('.git', '');
+    const headers = { 'Authorization': `token ${config.GITHUB_TOKEN}` };
+    const baseUrl = `https://api.github.com/repos/${config.GITHUB_USERNAME}/${repoName}/contents/Collections`;
+
+    try {
+        const response = await fetch(`${baseUrl}?ref=${branch}`, { headers });
+        const data = await handleResponse(response);
+
+        const collections = [];
+        for (const file of data) {
+            if (file.type === 'file' && file.name.endsWith('.json')) {
+                const fileResponse = await fetch(file.download_url);
+                const fileData = await handleResponse(fileResponse);
+                collections.push({
+                    name: file.name.replace('.json', ''),
+                    content: fileData,
+                });
+            }
+        }
+        return collections;
+    } catch (error) {
+        displayOutput('Error fetching collections from GitHub:'+ error.message, 'red');
+        return [];
     }
 }
