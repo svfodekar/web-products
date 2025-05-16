@@ -1,289 +1,682 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
- <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8RTJ4722XR"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<!DOCTYPE html>
+<html lang="en">
 
-  gtag('config', 'G-8RTJ4722XR');
-</script>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CodyTools - Professional Developer Tools</title>
-        <link rel="icon" href="main.png" type="image/png">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
-            :root {
-                --primary: #2563eb;      /* Professional blue */
-                --secondary: #1e40af;    /* Darker blue */
-                --accent: #f59e0b;       /* Gold accent */
-                --dark: #1f2937;         /* Dark gray */
-                --light: #f9fafb;        /* Off-white */
-                --text: #374151;         /* Gray text */
-                --card-bg: rgba(255, 255, 255, 0.95);
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8RTJ4722XR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-8RTJ4722XR');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyTools - Tools for Lazy Developers</title>
+    <link rel="icon" href="https://codytools.com/main.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #7f5af0;
+            --secondary: #2cb67d;
+            --accent: #f9bc60;
+            --dark: #16161a;
+            --darker: #0d0d10;
+            --light: #fffffe;
+            --text: #94a1b2;
+            --text-light: #fffffe;
+            --card-bg: rgba(22, 22, 26, 0.8);
+            --card-border: rgba(127, 90, 240, 0.2);
+            --glow: 0 0 20px rgba(127, 90, 240, 0.3);
+            --section-gap: 6rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            src: url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        }
+
+        body {
+            background-color: var(--darker);
+            background-image: 
+                radial-gradient(at 80% 0%, hsla(256, 84%, 69%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, hsla(164, 63%, 45%, 0.1) 0px, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Animated gradient border */
+        @keyframes borderRotate {
+            100% {
+                --angle: 360deg;
             }
+        }
 
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        .gradient-border {
+            --angle: 0deg;
+            position: relative;
+            border-radius: 16px;
+        }
+
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(var(--angle), var(--primary), var(--secondary), var(--primary));
+            animation: borderRotate 8s linear infinite;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .gradient-border:hover::before {
+            opacity: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 4rem 0 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-img {
+            height: 70px;
+            margin-right: 20px;
+            filter: drop-shadow(0 0 15px rgba(127, 90, 240, 0.5));
+        }
+
+        .logo-text {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            color: var(--text);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--light);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(127, 90, 240, 0.3);
+            border: none;
+            cursor: pointer;
+            margin: 0 0.5rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .cta-button.secondary:hover {
+            background: rgba(127, 90, 240, 0.1);
+            color: var(--light);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* Apps grid */
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: var(--section-gap);
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--card-border);
+            position: relative;
+            z-index: 1;
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), var(--glow);
+        }
+
+        .app-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .app-card:hover::after {
+            opacity: 1;
+        }
+
+        .app-card a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .app-icon {
+            padding: 1.5rem;
+            text-align: center;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-icon img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(127, 90, 240, 0.3));
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .app-card:hover .app-icon img {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 20px rgba(127, 90, 240, 0.5));
+        }
+
+        .app-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .general-info {
+  text-align: center;
+  margin: 20px 0; /* Top and bottom spacing */
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.section-subtitle {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+
+        .app-title {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .app-title i {
+            color: var(--accent);
+        }
+
+        .app-desc {
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            flex-grow: 1;
+        }
+
+        .app-link {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(127, 90, 240, 0.2);
+        }
+
+        .app-link:hover {
+            gap: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Creator info */
+        .creator-info {
+            background: var(--dark);
+            border-radius: 20px;
+            padding: 4rem;
+            text-align: center;
+            margin: var(--section-gap) auto;
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+        }
+
+        .creator-info:hover {
+            transform: translateY(-5px) scale(1.01);
+        }
+
+        .creator-info::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(44, 182, 125, 0.05) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        .creator-name {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .creator-title {
+            font-size: 1.3rem;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+
+        .creator-bio {
+            color: var(--text);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: var(--text);
+            font-size: 1.4rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(127, 90, 240, 0.2);
+            background: rgba(127, 90, 240, 0.05);
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+            transform: translateY(-5px) scale(1.1);
+            background: rgba(249, 188, 96, 0.1);
+            border-color: rgba(249, 188, 96, 0.3);
+            box-shadow: 0 5px 15px rgba(249, 188, 96, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text);
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(127, 90, 240, 0.3), transparent);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            opacity: 0.7;
+        }
+
+        /* Toast animation on card hover */
+        @keyframes toast {
+            0% {
+                transform: translateY(20px);
+                opacity: 0;
             }
-
-            body {
-                background: linear-gradient(135deg, var(--light), #e5e7eb);
-                color: var(--text);
-                min-height: 100vh;
-                line-height: 1.6;
+            20%, 80% {
+                transform: translateY(0);
+                opacity: 1;
             }
+            100% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
 
+        /* .app-card:hover::before {
+            content: 'Click to explore';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 10;
+            animation: toast 1.5s ease-out;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        } */
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
             .container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 2rem;
+                padding: 0 1rem;
             }
-
-            header {
-                text-align: center;
-                margin-bottom: 3rem;
-                padding-bottom: 2rem;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            }
-
-            .logo-container {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 1.5rem;
-            }
-
-            .logo-img {
-                height: 60px;
-                margin-right: 15px;
-            }
-
+            
             .logo-text {
-                font-size: 2.5rem;
-                font-weight: 700;
-                color:  #155cbf
+                font-size: 2rem;
             }
-
-            .tagline {
-                font-size: 1.2rem;
-                color: var(--text);
-                opacity: 0.8;
-                max-width: 700px;
-                margin: 0 auto;
-            }
-
-            .apps-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 2rem;
-                margin-bottom: 4rem;
-            }
-
-            .app-card {
-                background: var(--card-bg);
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                border: 1px solid rgba(0, 0, 0, 0.05);
-            }
-
-            .app-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            }
-
-            .app-card a {
-                text-decoration: none;
-                color: inherit;
-                display: block;
-                height: 100%;
-            }
-
-            .app-icon {
-                background: linear-gradient(135deg, var(--primary), var(--secondary));
-                padding: 1.5rem;
-                text-align: center;
-                height: 180px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .app-icon img {
-                max-width: 100%;
-                max-height: 100%;
-                object-fit: contain;
-            }
-
-            .app-content {
-                padding: 1.5rem;
-            }
-
-            .app-title {
-                color: var(--primary);
-                margin-bottom: 0.5rem;
-                font-size: 1.3rem;
-            }
-
-            .app-desc {
-                color: var(--text);
-                opacity: 0.8;
-                font-size: 0.95rem;
-                margin-bottom: 1rem;
-                min-height: 60px;
-            }
-
-            .app-link {
-                color: var(--accent);
-                font-weight: 600;
-                font-size: 0.9rem;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
+            
             .creator-info {
-                background: var(--dark);
-                color: white;
-                padding: 3rem 2rem;
-                border-radius: 12px;
-                text-align: center;
-                margin-top: 4rem;
+                padding: 2.5rem 1.5rem;
             }
+        }
+    </style>
+</head>
 
-            .creator-name {
-                font-size: 1.8rem;
-                margin-bottom: 0.5rem;
-                color: white;
-            }
-
-            .creator-title {
-                font-size: 1.1rem;
-                opacity: 0.8;
-                margin-bottom: 1.5rem;
-            }
-
-            .social-links {
-                display: flex;
-                justify-content: center;
-                gap: 1.5rem;
-                margin-top: 1.5rem;
-            }
-
-            .social-links a {
-                color: white;
-                font-size: 1.2rem;
-                transition: color 0.3s ease;
-            }
-
-            .social-links a:hover {
-                color: var(--accent);
-            }
-
-            footer {
-                text-align: center;
-                padding: 2rem 0;
-                color: var(--text);
-                opacity: 0.7;
-                font-size: 0.9rem;
-            }
-
-            @media (max-width: 768px) {
-                .apps-grid {
-                    grid-template-columns: 1fr;
-                }
-                
-                .container {
-                    padding: 1.5rem;
-                }
-                
-                .logo-text {
-                    font-size: 2rem;
-                }
-                
-                .logo-img {
-                    height: 50px;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <header>
+<body>
+    <div class="container">
+        <header class="animate-fade-in">
+            <div class="header-content">
                 <div class="logo-container">
-                    <img src="main.png" alt="CodyTools Logo" class="logo-img">
-                    <div class="logo-text">CodyTools.com</div>
+                    <img src="https://codytools.com/main.png" alt="CodyTools Logo" class="logo-img">
+                    <div class="logo-text">CodyTools</div>
                 </div>
-                <p class="tagline">Premium developer tools designed to optimize your workflow and enhance productivity</p>
-            </header>
+                <p class="tagline">Premium developer tools designed to optimize your workflow, enhance productivity, and streamline your development process</p>
+                <div class="button-group">
+                    <a href="#tools" class="cta-button animate__animated animate__pulse animate__infinite animate__slower">
+                        <i class="fas fa-rocket"></i> Explore Tools
+                    </a>
+                    <a href="#contact" class="cta-button secondary">
+                        <i class="fas fa-envelope"></i> Contact Me
+                    </a>
+                </div>
+            </div>
+        </header>
 
-            <main>
+        <main>
+            <section id="tools" class="section">
+
+                <div class="general-info">
+                    <h2 class="section-title">Web Tools That Work Like Magic</h2>
+                <p class="section-subtitle">Engineered to save time, eliminate grunt work, and supercharge your dev flow without getting in your way.</p>
+                </div>
+                
                 <div class="apps-grid">
-                    <div class="app-card">
+                    <div class="app-card gradient-border">
                         <a href="https://www.codytools.com/redirect-to-local-server" target="_blank">
                             <div class="app-icon">
-                                <img src="rtls.png" alt="Redirect to Local Server">
+                                <img src="https://codytools.com/rtls.png" alt="Redirect to Local Server">
                             </div>
                             <div class="app-content">
-                                <h3 class="app-title">Redirect to Local Server</h3>
-                                <p class="app-desc">Effortlessly tunnel public URLs to your local development environment. Perfect for testing webhooks, OAuth callbacks, and API integrations without deploying.</p>
-                                <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
+                                <h3 class="app-title"><i class="fas fa-exchange-alt"></i> Redirect to Local Server</h3>
+                                <p class="app-desc">Connect your live frontend directly to your local server and test API changes in real time. Quickly validate updates on the live UI to streamline your development, debugging, and testing workflow.</p>
+                                <span class="app-link">Launch Tool <i class="fas fa-arrow-right"></i></span>
                             </div>
                         </a>
                     </div>
 
-                    <div class="app-card">
+                    <div class="app-card gradient-border">
                         <a href="https://www.codytools.com/github-postman-sync" target="_blank">
                             <div class="app-icon">
-                                <img src="gps1.png" alt="GitHub Postman Sync">
+                                <img src="https://codytools.com/gps1.png" alt="GitHub Postman Sync">
                             </div>
                             <div class="app-content">
-                                <h3 class="app-title">GitHub Postman Sync</h3>
-                                <p class="app-desc">Automatically synchronize your Postman collections with GitHub repositories. Version control your API definitions and collaborate seamlessly with your team.</p>
-                                <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
+                                <h3 class="app-title"><i class="fas fa-sync-alt"></i> GitHub Postman Sync</h3>
+                                <p class="app-desc">Easily sync your Postman collections with GitHub repositories for version control. Track API changes, manage definitions efficiently, and collaborate smoothly with your team across projects.</p>
+                                <span class="app-link">Launch Tool <i class="fas fa-arrow-right"></i></span>
                             </div>
                         </a>
                     </div>
 
-                    <div class="app-card">
+                    <div class="app-card gradient-border">
                         <a href="https://www.codytools.com/smart-json-formatter" target="_blank">
                             <div class="app-icon">
-                                <img src="sjf.png" alt="Smart JSON Formatter">
+                                <img src="https://codytools.com/sjf.png" alt="Smart JSON Formatter">
                             </div>
                             <div class="app-content">
-                                <h3 class="app-title">Smart JSON Formatter</h3>
-                                <p class="app-desc">Advanced JSON processing with intelligent formatting, validation, minification, and conversion to XML/YAML. Supports schema analysis and error detection.</p>
-                                <span class="app-link">Launch Tool <i class="fas fa-external-link-alt"></i></span>
+                                <h3 class="app-title"><i class="fas fa-code"></i> Smart JSON Formatter</h3>
+                                <p class="app-desc">Format and visualize JSON data effortlessly with this simple, intuitive tool. It also includes handy features like a JSON path finder, making it easier to explore complex data structures.</p>
+                                <span class="app-link">Launch Tool <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="app-card gradient-border">
+                        <a href="https://www.npmjs.com/package/excel-as-database" target="_blank">
+                            <div class="app-icon">
+                                <img src="./ead2.png" alt="Excel As Database">
+                            </div>
+                            <div class="app-content">
+                                <h3 class="app-title"><i class="fas fa-database"></i> Excel As Database</h3>
+                                <p class="app-desc">Npm package designed to leverage Microsoft Excel sheets as a lightweight and easy-to-use database solution. Enables developers to seamlessly interact with Excel files as if they are conventional databases.</p>
+                                <span class="app-link">View Package <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="app-card gradient-border">
+                        <a href="#" target="_blank">
+                            <div class="app-icon">
+                                <img src="./mu.png" alt="Multi-Users Switch">
+                            </div>
+                            <div class="app-content">
+                                <h3 class="app-title"><i class="fas fa-users"></i> Multi-Users Switch</h3>
+                                <p class="app-desc">Quickly switch between different user accounts without logging out. Perfect for testing applications with multiple roles and permissions. Save time during development and testing phases.</p>
+                                <span class="app-link">Coming Soon <i class="fas fa-clock"></i></span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="app-card gradient-border">
+                        <a href="#contact">
+                            <div class="app-icon">
+                                <img src="./idea.png" alt="Your Idea">
+                            </div>
+                            <div class="app-content">
+                                <h3 class="app-title"><i class="fas fa-lightbulb"></i> Your Tool Idea</h3>
+                                <p class="app-desc">Have a developer tool idea that would make your life easier? We're always looking for new problems to solve. Share your idea with me and I might build it!</p>
+                                <span class="app-link">Suggest a Tool <i class="fas fa-arrow-right"></i></span>
                             </div>
                         </a>
                     </div>
                 </div>
+            </section>
 
-                <div class="creator-info">
+            <section id="contact" class="section">
+                <div class="creator-info gradient-border">
                     <h2 class="creator-name">Saurabh Fodekar</h2>
                     <p class="creator-title">Backend Developer & Tools Creator</p>
-                    <p>Building professional-grade developer tools to solve real-world developer's challenges</p>
+                    <p class="creator-bio">Building professional-grade developer tools to solve real-world challenges. With years of experience in backend development, I create tools that I wish existed when I was solving complex problems.</p>
+                    
                     <div class="social-links">
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        <a href="https://twitter.com/saurabhfodekar" aria-label="Twitter" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://github.com/svfodekar" aria-label="GitHub" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/saurabh-fodekar-b094591b4/" aria-label="LinkedIn" target="_blank">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="mailto:svfodekar@gmail.com" aria-label="Email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
                     </div>
                 </div>
-            </main>
+            </section>
+        </main>
 
-            <footer>
-                <p>&copy; 2023 CodyTools.com. All rights reserved.</p>
-                <p>Professional developer tools for modern workflows | contact@codytools.com</p>
-            </footer>
-        </div>
-    </body>
-    </html>
+        <footer>
+            <div class="footer-links">
+                <a href="#">Home</a>
+                <a href="#tools">Tools</a>
+                <a href="#contact">Contact</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <p class="copyright">&copy; 2023 CodyTools.com. All rights reserved across the galaxy.</p>
+            <p>Tools for developers who know the value of doing nothing</p>
+        </footer>
+    </div>
+
+    <script>
+        // Toast animation on card hover
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate elements when they come into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.app-card, .feature-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+
+</html>
