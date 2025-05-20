@@ -446,7 +446,7 @@ function showExtensionErrorModal() {
 
   // Create download button (changed from link to button for better control)
   const downloadButton = document.createElement('button');
-  downloadButton.textContent = 'If not downloaded yet, click here to download';
+  downloadButton.textContent = 'Not installed yet? click here to open Chrome Store';
   downloadButton.style.display = 'block';
   downloadButton.style.width = '100%';
   downloadButton.style.marginTop = '12px';
