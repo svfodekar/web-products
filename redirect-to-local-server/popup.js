@@ -20,9 +20,9 @@ const extensionMessage = `Extension ID is missing from the URL. Please close and
 const TipHtmlString = `<p>🛠️ 🔄 After adding a new <strong>DOMAIN</strong> or <strong>LONG BREAK</strong>, turn <strong>OFF</strong> the extension & <strong>REFRESH</strong> your Web App to sync with the extension 😊</p>`;
 const UpdateMessageString = `<p>🛠️ <strong>Update available !</strong> Fixed bugs and improved UI for better performance <a href="https://chromewebstore.google.com/detail/redirect-to-local-server/mcckhgbpcjcfdmnmbahhoakjlnmmjjgo" target="_blank">click to update</a> 😊</p>`;
 
-!extensionId && alert(extensionMessage);
+!extensionId && showExtensionErrorModal();
 
-createPopup(TipHtmlString, 15000);
+extensionId && createPopup(TipHtmlString, 15000);
 
 
 
@@ -179,7 +179,7 @@ function handleEnableToggle(ruleId, status) {
 
 // Load Saved Redirects and Extension State
 async function refreshPage(source) {
-  !extensionId && alert(extensionMessage);
+  //!extensionId && alert(extensionMessage);
 
   // Step 2: Send a message to the extension to get all data
   chrome.runtime.sendMessage(extensionId, { action: 'GetAllData', search }, async (response) => {
@@ -397,6 +397,109 @@ function setHrWidths() {
   document.querySelectorAll('hr').forEach(e => e.style.width = w + 'px');
 }
 
+function showExtensionErrorModal() {
+  // Create modal overlay
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  overlay.style.backdropFilter = 'blur(2px)';
+  overlay.style.zIndex = '9999';
+  overlay.style.display = 'flex';
+  overlay.style.justifyContent = 'center';
+  overlay.style.alignItems = 'center';
+
+  // Create modal content
+  const modal = document.createElement('div');
+  modal.style.backgroundColor = '#ffffff';
+  modal.style.padding = '25px';
+  modal.style.borderRadius = '8px';
+  modal.style.maxWidth = '380px';
+  modal.style.width = '90%';
+  modal.style.textAlign = 'center';
+  modal.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+
+  // Add warning icon
+  const warningIcon = document.createElement('div');
+  warningIcon.innerHTML = '⚠️';
+  warningIcon.style.fontSize = '40px';
+  warningIcon.style.marginBottom = '12px';
+
+  // Add main message
+  const mainMessage = document.createElement('p');
+  mainMessage.textContent = 'Extension ID is missing from the URL.';
+  mainMessage.style.fontWeight = '600';
+  mainMessage.style.fontSize = '17px';
+  mainMessage.style.marginBottom = '8px';
+  mainMessage.style.color = '#333';
+
+  // Add secondary message
+  const secondaryMessage = document.createElement('p');
+  secondaryMessage.textContent = 'Please close and reopen the extension from the Chrome extensions menu to resolve this issue.';
+  secondaryMessage.style.fontSize = '14px';
+  secondaryMessage.style.marginBottom = '20px';
+  secondaryMessage.style.color = '#555';
+  secondaryMessage.style.lineHeight = '1.4';
+
+  // Create download button (changed from link to button for better control)
+  const downloadButton = document.createElement('button');
+  downloadButton.textContent = 'If not downloaded yet, click here to download';
+  downloadButton.style.display = 'block';
+  downloadButton.style.width = '100%';
+  downloadButton.style.marginTop = '12px';
+  downloadButton.style.padding = '8px 12px';
+  downloadButton.style.backgroundColor = '#4285F4';
+  downloadButton.style.color = 'white';
+  downloadButton.style.border = 'none';
+  downloadButton.style.borderRadius = '4px';
+  downloadButton.style.fontWeight = '500';
+  downloadButton.style.fontSize = '14px';
+  downloadButton.style.cursor = 'pointer';
+  downloadButton.style.transition = 'all 0.15s ease';
+
+  // Hover effects
+  downloadButton.onmouseenter = () => {
+    downloadButton.style.backgroundColor = '#3367D6';
+    downloadButton.style.transform = 'translateY(-1px)';
+  };
+  downloadButton.onmouseleave = () => {
+    downloadButton.style.backgroundColor = '#4285F4';
+    downloadButton.style.transform = 'translateY(0)';
+  };
+
+  // Fixed click handler
+  downloadButton.onclick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(
+      'https://chromewebstore.google.com/detail/redirect-to-local-server/mcckhgbpcjcfdmnmbahhoakjlnmmjjgo',
+      '_blank',
+      'noopener,noreferrer'
+    );
+  };
+
+  // Append elements
+  modal.appendChild(warningIcon);
+  modal.appendChild(mainMessage);
+  modal.appendChild(secondaryMessage);
+  modal.appendChild(downloadButton);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  // Disable scrolling
+  document.body.style.overflow = 'hidden';
+  
+  // Prevent closing when clicking outside
+  overlay.onclick = (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+}
 
 
 
