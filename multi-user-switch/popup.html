@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multi User Switcher</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<!-- URL Input Modal -->
+<div id="url-modal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Add a New Website Login URL</h2>
+    <input type="text" id="url-input" placeholder="https://your-site.com/login" />
+    <div class="modal-buttons">
+      <button id="cancel-modal">Cancel</button>
+      <button id="submit-url">Add</button>
+    </div>
+  </div>
+</div>
+<body>
+  <div class="container">
+    <!-- Enhanced Header Section -->
+    <div class="app-header">
+      <div class="logo-container">
+        <img src="mu2.jpg" alt="Multi User Switch Logo" class="logo">
+      </div>
+      <div class="app-title">
+        <h1>Multi User Login Switch</h1>
+        <p class="app-subtitle">Secure multi-user login manager</p>
+      </div>
+      <button class="help-button" title="Get help">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12" y2="17"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="website-controls">
+      <div class="custom-dropdown">
+        <div class="dropdown-selected" id="selected-website">Select website...</div>
+        <div class="dropdown-list" id="dropdown-list"></div>
+      </div>
+      <button id="add-website">Add website</button>
+    </div>
+
+    <div id="user-list" class="user-list"></div>
+
+    <div class="add-user">
+      <input type="text" id="new-username" placeholder="Enter new user">
+      <input type="password" id="new-password" placeholder="It's password">
+      <button id="add-user">Add</button>
+    </div>
+
+    <div id="status" class="status">Status: Ready to use</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

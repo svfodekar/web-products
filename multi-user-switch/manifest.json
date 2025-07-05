@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Multi-User Login Switcher",
+  "version": "1.0",
+  "description": "Switch between multiple user accounts without logging out",
+  "permissions": [
+    "storage",
+    "cookies",
+    "activeTab",
+    "scripting",
+    "tabs",
+    "webRequest",
+    "browsingData",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "mu2.jpg",
+      "48": "mu2.jpg",
+      "128": "mu2.jpg"
+    }
+  },
+  "icons": {
+    "16": "mu2.jpg",
+    "48": "mu2.jpg",
+    "128": "mu2.jpg"
+  }
+}
