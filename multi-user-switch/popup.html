@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Multi User Switcher</title>
   <link rel="stylesheet" href="popup.css">
@@ -15,33 +16,35 @@
     </div>
   </div>
 </div>
+
 <body>
   <div class="container">
     <!-- Enhanced Header Section -->
     <div class="app-header">
       <div class="logo-container">
-        <img src="mu2.jpg" alt="Multi User Switch Logo" class="logo">
+        <img src="mu4.png" alt="Multi User Switch Logo" class="logo">
       </div>
       <div class="app-title">
-        <h1>Multi User Login Switch</h1>
+        <h1>Multi-User Login Switch</h1>
         <p class="app-subtitle">Secure multi-user login manager</p>
       </div>
-      <button class="help-button" title="Get help">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-          <line x1="12" y1="17" x2="12" y2="17"></line>
-        </svg>
-      </button>
+      <button class="help-button" title="Get help">?</button>
     </div>
 
     <div class="website-controls">
       <div class="custom-dropdown">
         <div class="dropdown-selected" id="selected-website">Select website...</div>
+         <span class="dropdown-caret"></span> 
         <div class="dropdown-list" id="dropdown-list"></div>
       </div>
-      <button id="add-website">Add website</button>
+      <button id="add-website">+ Website</button>
+
     </div>
+    <!-- MFA Checkbox -->
+    <label class="mfa-label">
+      Multi-factor authentication required?
+      <input type="checkbox" id="otp-required" />
+    </label>
 
     <div id="user-list" class="user-list"></div>
 
@@ -56,4 +59,5 @@
 
   <script src="popup.js"></script>
 </body>
+
 </html>
