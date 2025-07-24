@@ -1,10 +1,11 @@
 const welcomeMessages = [
-  "Welcome back, buddy! Ready to manage your logins?",
-  "Good to see you again! Let's get started.",
-  "Hello there! Your passwords are safe with us.",
-  "Welcome back! All your credentials are secure.",
-  "Hi again! Ready to log in to your favorite sites?"
+  "Your credentials are stored securely on your machine.",
+  "No data is sent anywhere - everything stays local.",
+  "Ideal for development and testing environments.",
+  "Fast, private, and stored only in your browser.",
+  "Your login info is safe and never leaves your device."
 ];
+
 
 const modal = document.getElementById('url-modal');
 const urlInput = document.getElementById('url-input');
@@ -15,7 +16,7 @@ const urlModal = document.getElementById('url-modal');
 
 const selectedWebsiteEl = document.getElementById('selected-website');
 const dropdownListEl = document.getElementById('dropdown-list');
-
+const mfaCheckbox = document.getElementById('otp-required');
 
 // Show modal on button click
 addWebsiteBtn.addEventListener('click', () => {
@@ -29,43 +30,83 @@ cancelModalBtn.addEventListener('click', () => {
   modal.classList.add('hidden');
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-  //const websiteSelect = document.getElementById('website-select');
-  //const addWebsiteBtn = document.getElementById('add-website');
+
+
+document.addEventListener('DOMContentLoaded', function () {
   const userList = document.getElementById('user-list');
   const newUsername = document.getElementById('new-username');
   const newPassword = document.getElementById('new-password');
   const addUserBtn = document.getElementById('add-user');
   const status = document.getElementById('status');
 
-// Show random welcome message
-const randomWelcome = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-updateStatus(randomWelcome, 'info');
+  // Show random welcome message
+  const randomWelcome = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+  updateStatus(randomWelcome, 'info');
 
-// Add website from modal
-submitUrlBtn.addEventListener('click', () => {
-  const website = urlInput.value.trim();
-  if (!website) {
-    updateStatus('Please enter a valid URL', 'error');
-    return;
-  }
-
-  chrome.storage.sync.get(['websites'], function (result) {
-    const websites = result.websites || {};
-    if (!websites[website]) {
-      websites[website] = [];
-      websites[website] = [];
-      chrome.storage.sync.set({ websites }, function () {
-        updateWebsiteDropdown(websites);
-        updateStatus(`Website ${website} added`, 'success');
-        urlModal.classList.add('hidden');
-        urlInput.value = '';
-      });
-    } else {
-      updateStatus('Website already exists', 'error');
+  mfaCheckbox.addEventListener('change', function () {
+    const website = selectedWebsiteEl.getAttribute('data-value');
+    if (!website) {
+      updateStatus('Please select a website first', 'error');
+      this.checked = false; // Revert if no website selected
+      return;
     }
+
+    chrome.storage.sync.get(['mfaFlags'], function (result) {
+      const mfaFlags = result.mfaFlags || {};
+      mfaFlags[website] = mfaCheckbox.checked;
+
+      chrome.storage.sync.set({ mfaFlags }, function () {
+        updateStatus(`Multi-factor authentication ${mfaCheckbox.checked ? 'Enabled' : 'Disabled'}`, 'success');
+      });
+    });
   });
-});
+
+  // Add website from modal
+  submitUrlBtn.addEventListener('click', () => {
+    let website = urlInput.value.trim();
+
+    if (!website) {
+      updateStatus('Please enter a valid URL', 'error');
+      return;
+    }
+    // Add protocol if missing
+    if (!/^https?:\/\//i.test(website)) {
+      website = 'https://' + website;
+    }
+
+    try {
+      const parsedUrl = new URL(website);
+      const hasFullHost = !!parsedUrl.hostname;
+      const path = parsedUrl.pathname;
+      const hasNonRootPath = path && path !== '/' && path.split('/').filter(Boolean).length > 0;
+
+      if (!hasFullHost || !hasNonRootPath) {
+        updateStatus('Incorrect URL. Example: https://example.com/login', 'error');
+        return;
+      }
+    } catch {
+      updateStatus('Incorrect URL. Example: https://example.com/login', 'error');
+      return;
+    }
+
+    chrome.storage.sync.get(['websites', 'mfaFlags'], function (result) {
+      const websites = result.websites || {};
+      const mfaFlags = result.mfaFlags || {};
+      if (!websites[website]) {
+        websites[website] = [];
+        mfaFlags[website] = false;
+        chrome.storage.sync.set({ websites, mfaFlags }, function () {
+          updateWebsiteDropdown(websites);
+          selectWebsite(website, websites); // ✅ Auto-select in dropdown
+          updateStatus(`Website ${website} added`, 'success');
+          urlModal.classList.add('hidden');
+          urlInput.value = '';
+        });
+      } else {
+        updateStatus('Website already exists', 'error');
+      }
+    });
+  });
 
   // Save the last selected website
   function saveLastSelectedWebsite(website) {
@@ -73,20 +114,26 @@ submitUrlBtn.addEventListener('click', () => {
   }
 
   // Load saved data
-  chrome.storage.sync.get(['websites', 'lastSelectedWebsite'], function(result) {
+  chrome.storage.sync.get(['websites', 'lastSelectedWebsite'], function (result) {
     const websites = result.websites || {};
     updateWebsiteDropdown(websites);
-    
+
     if (result.lastSelectedWebsite && websites[result.lastSelectedWebsite]) {
       selectedWebsiteEl.textContent = result.lastSelectedWebsite;
       selectedWebsiteEl.setAttribute('data-value', result.lastSelectedWebsite);
       renderUserList(result.lastSelectedWebsite, websites[result.lastSelectedWebsite]);
+
+      // Load MFA flag
+      chrome.storage.sync.get(['mfaFlags'], (flagResult) => {
+        const mfaFlags = flagResult.mfaFlags || {};
+        mfaCheckbox.checked = !!mfaFlags[result.lastSelectedWebsite];
+      });
     }
-  
+
   });
 
   // Add user
-  addUserBtn.addEventListener('click', function() {
+  addUserBtn.addEventListener('click', function () {
     const website = selectedWebsiteEl.getAttribute('data-value');
     const username = newUsername.value.trim();
     const password = newPassword.value.trim();
@@ -101,7 +148,7 @@ submitUrlBtn.addEventListener('click', () => {
       return;
     }
 
-    chrome.storage.sync.get(['websites'], function(result) {
+    chrome.storage.sync.get(['websites'], function (result) {
       const websites = result.websites || {};
       if (!websites[website]) {
         websites[website] = [];
@@ -114,7 +161,7 @@ submitUrlBtn.addEventListener('click', () => {
       }
 
       websites[website].push({ username, password });
-      chrome.storage.sync.set({ websites }, function() {
+      chrome.storage.sync.set({ websites }, function () {
         renderUserList(website, websites[website]);
         newUsername.value = '';
         newPassword.value = '';
@@ -127,11 +174,11 @@ submitUrlBtn.addEventListener('click', () => {
   function updateWebsiteDropdown(websites) {
     dropdownListEl.innerHTML = '';
     const websiteKeys = Object.keys(websites).sort();
-  
+
     websiteKeys.forEach((website) => {
       const item = document.createElement('div');
       item.className = 'dropdown-item';
-  
+
       const label = document.createElement('span');
       label.textContent = website;
       label.style.flex = '1';
@@ -142,7 +189,7 @@ submitUrlBtn.addEventListener('click', () => {
         saveLastSelectedWebsite(website);
         renderUserList(website, websites[website]);
       };
-  
+
       const deleteBtn = document.createElement('span');
       deleteBtn.className = 'dropdown-delete';
       deleteBtn.innerHTML = 'x';
@@ -162,7 +209,7 @@ submitUrlBtn.addEventListener('click', () => {
           });
         }
       };
-  
+
       item.appendChild(label);
       item.appendChild(deleteBtn);
       dropdownListEl.appendChild(item);
@@ -173,7 +220,7 @@ submitUrlBtn.addEventListener('click', () => {
     dropdownListEl.style.display =
       dropdownListEl.style.display === 'block' ? 'none' : 'block';
   });
-  
+
   // Hide dropdown when clicking outside
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.custom-dropdown')) {
@@ -181,11 +228,11 @@ submitUrlBtn.addEventListener('click', () => {
     }
   });
 
-  
+
   // All users list
   function renderUserList(website, users) {
     userList.innerHTML = '';
-    
+
     if (users.length === 0) {
       const emptyState = document.createElement('div');
       emptyState.className = 'status info';
@@ -272,5 +319,20 @@ submitUrlBtn.addEventListener('click', () => {
     status.textContent = message;
     status.className = 'status ' + type;
   }
-  
+
+  function selectWebsite(website, websites) {
+    selectedWebsiteEl.textContent = website;
+    selectedWebsiteEl.setAttribute('data-value', website);
+    dropdownListEl.style.display = 'none';
+    saveLastSelectedWebsite(website);
+    renderUserList(website, websites[website]);
+
+    // Load MFA flag if available
+    chrome.storage.sync.get(['mfaFlags'], (flagResult) => {
+      const mfaFlags = flagResult.mfaFlags || {};
+      mfaCheckbox.checked = !!mfaFlags[website];
+    });
+  }
+
 });
+
