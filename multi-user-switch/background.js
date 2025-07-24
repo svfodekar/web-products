@@ -7,10 +7,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'switchUser') {
     if (isSwitching) {
       console.warn('[SwitchUser] Already switching. Ignoring duplicate request.');
-      sendResponse({ success: false, error: 'Already switching user' });
+      sendResponse({ success: false, error: 'Something went wrong. Refresh Tab and try again.' });
       return true;
     }
-
+    
     isSwitching = true; // block next calls
     handleUserSwitch(request, (response) => {
       isSwitching = false; // allow again
@@ -59,10 +59,16 @@ async function handleUserSwitch(request, sendResponse) {
                 }
 
                 console.log('[SwitchUser] Login successful. Reloading other tabs...');
-                setTimeout(() => {
-                  reloadTabsAndRefocus(website, tabId);
-                  sendResponse({ success: true });
-                }, 2000);
+                chrome.storage.sync.get(['mfaFlags'], (result) => {
+                  const mfaFlags = result.mfaFlags || {};
+                  const keepLoginTab = mfaFlags[website] == true;
+                  console.log("mfaFlags ", mfaFlags[website])
+                
+                  setTimeout(() => {
+                    reloadTabsAndRefocus(website, tabId, keepLoginTab);
+                    sendResponse({ success: true });
+                  }, 1);
+                });
               })
               .catch((err) => {
                 console.error('[InjectFormLogin] Error:', err);
@@ -99,22 +105,38 @@ function injectFormLogin(tabId, user, website) {
             let attempts = 0;
 
             function tryLogin() {
-              const inputs = Array.from(document.querySelectorAll('input')).filter(isVisible);
-
-              if (inputs.length >= 2) {
-                const [userInput, passInput] = inputs;
-
+              const passwordInput = Array.from(document.querySelectorAll('input[type="password"]')).find(isVisible);
+              let userInput = null;
+              
+              if (passwordInput) {
+                const allInputs = Array.from(document.querySelectorAll('input')).filter(isVisible);
+                const passwordIndex = allInputs.indexOf(passwordInput);
+              
+                // Look for the first visible input above password (text/email/number/etc.)
+                for (let i = passwordIndex - 1; i >= 0; i--) {
+                  if (['text', 'email', 'tel', 'number'].includes(allInputs[i].type)) {
+                    userInput = allInputs[i];
+                    break;
+                  }
+                }
+              }
+              
+              if (userInput && passwordInput) {
                 userInput.focus();
                 userInput.value = username;
                 userInput.dispatchEvent(new Event('input', { bubbles: true }));
-
-                passInput.focus();
-                passInput.value = password;
-                passInput.dispatchEvent(new Event('input', { bubbles: true }));
-
+              
+                passwordInput.focus();
+                passwordInput.value = password;
+                passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
+              
                 const buttons = Array.from(document.querySelectorAll('button, input[type=submit]')).filter(isVisible);
-                const submitBtn = buttons.find(btn => btn.innerText?.toLowerCase().includes('log') || btn.type === 'submit');
-
+                const submitKeywords = ['log', 'sign', 'submit', 'continue', 'next', 'proceed'];
+                const submitBtn = buttons.find(btn =>
+                  btn.type === 'submit' ||
+                  submitKeywords.some(kw => btn.innerText?.toLowerCase().includes(kw))
+                );
+                
                 setTimeout(() => {
                   if (submitBtn) {
                     submitBtn.click();
@@ -123,7 +145,7 @@ function injectFormLogin(tabId, user, website) {
                   }
 
                   waitForErrorOrSuccess(resolve);
-                }, 100);
+                }, 600);
 
               } else if (attempts >= 30) {
                 resolve({ success: false, error: 'Login inputs did not appear in time' });
@@ -146,6 +168,7 @@ function injectFormLogin(tabId, user, website) {
                   return done({ success: false, error: 'Login failed: error message appeared' });
                 }
 
+                console.log("checkCount", checkCount)
                 if (checkCount++ > 10) {
                   return done({ success: false, error: 'Login likely failed: no redirect detected' });
                 }
@@ -172,32 +195,55 @@ function injectFormLogin(tabId, user, website) {
 }
 
 
-function reloadTabsAndRefocus(website, excludeTabId) {
+function reloadTabsAndRefocus(website, excludeTabId, keepLoginTab = false) {
   const targetDomain = new URL(website).hostname;
-  const shouldCloseTab = true;
+  const shouldCloseTab = !keepLoginTab;
 
   chrome.tabs.query({}, (tabs) => {
+    let isPreviousTabOfSameDomain = false;
+    let isLastTabWasOfLogin = false;
+
     tabs.forEach((tab) => {
       try {
         const url = new URL(tab.url);
+
+        // Check if the original tab is from the same domain
+        if (tab.id === lastFocusedTab && url.hostname === targetDomain) {
+          isPreviousTabOfSameDomain = true;
+
+          const originalPath = url.pathname.toLowerCase().replace(/\/+$/, ''); // remove trailing slash
+          const loginPath = new URL(website).pathname.toLowerCase().replace(/\/+$/, '');
+          isLastTabWasOfLogin = originalPath == loginPath;
+          console.log("isLastTabWasOfLogin",originalPath, loginPath , isLastTabWasOfLogin)
+        }
+
+        // Reload all other tabs from the same domain
         if (url.hostname === targetDomain && tab.id !== excludeTabId) {
           chrome.tabs.reload(tab.id);
           console.log(`[TabReload] Reloaded tab ${tab.id}: ${tab.url}`);
         }
       } catch (e) {
-        // Ignore non-http(s) tabs
+        // Ignore tabs without valid URLs (e.g., chrome://, about:blank)
       }
     });
 
-    if (shouldCloseTab && tempTab) {
+    // ✅ Close login tab only if original tab is from the same domain
+    if (shouldCloseTab && !isLastTabWasOfLogin && tempTab && isPreviousTabOfSameDomain) {
       chrome.tabs.remove(tempTab, () => {
         console.log('[Cleanup] Closed login tab');
       });
     }
 
-    focusTabById(lastFocusedTab);
+    console.log("focusTabById", isPreviousTabOfSameDomain , isLastTabWasOfLogin ,keepLoginTab, isPreviousTabOfSameDomain && !isLastTabWasOfLogin && !keepLoginTab)
+    // ✅ Refocus only if the original tab was from same domain
+    if (isPreviousTabOfSameDomain && !isLastTabWasOfLogin && !keepLoginTab ) {
+      focusTabById(lastFocusedTab);
+    } else {
+      console.log('[FocusTab] Skipped refocusing original tab (different domain)');
+    }
   });
 }
+
 
 async function nuclearLogout(websiteUrl) {
   try {
