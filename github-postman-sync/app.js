@@ -3,7 +3,6 @@ let extensionId = urlParams.get("extensionId");
 
 const userCredentials = {};
 const postmanApiUrl = 'https://api.getpostman.com';
-
 const outputDiv = document.getElementById('output');
 const commandInput = document.getElementById('command-input');
 
